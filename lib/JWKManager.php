@@ -31,7 +31,8 @@ class JWKManager extends Base
         if (!isset($header['kid'])) {
             return;
         }
-        return array_key_exists($header['kid'], $this->keys)?$this->keys[$header['kid']]:null;
+
+        return array_key_exists($header['kid'], $this->keys) ? $this->keys[$header['kid']] : null;
     }
 
     protected function getSupportedMethods()
@@ -58,7 +59,7 @@ class JWKManager extends Base
             "kty" => "oct",
             "k"   => Base64Url::encode($value),
         );
-        
+
         return $this->addKeyFromValues($id, $values);
     }
 
@@ -72,7 +73,7 @@ class JWKManager extends Base
     public function addECKey($id, $ec)
     {
         $values = ECConverter::loadKey($ec, $passphrase);
-        
+
         return $this->addKeyFromValues($id, $values);
     }
 
@@ -91,6 +92,7 @@ class JWKManager extends Base
             $key = $this->createJWK($values);
             $this->keys[$id] = $key;
         }
+
         return $this;
     }
 }

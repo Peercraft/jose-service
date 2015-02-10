@@ -27,8 +27,7 @@ class Loader extends Base
         JWKManagerInterface    $jwk_manager,
         JWKSetManagerInterface $jwkset_manager,
         CompressionManagerInterface $compression_manager
-    )
-    {
+    ) {
         $this->jwt_manager = $jwt_manager;
         $this->jwa_manager = $jwa_manager;
         $this->jwk_manager = $jwk_manager;
@@ -39,7 +38,7 @@ class Loader extends Base
     public function setAudience($audience)
     {
         $this->audience = $audience;
-        
+
         return $this;
     }
 

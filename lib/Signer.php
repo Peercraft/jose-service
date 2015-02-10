@@ -23,8 +23,7 @@ class Signer extends Base
         JWTManagerInterface    $jwt_manager,
         JWKManagerInterface    $jwk_manager,
         JWKSetManagerInterface $jwkset_manager
-    )
-    {
+    ) {
         $this->jwt_manager = $jwt_manager;
         $this->jwa_manager = $jwa_manager;
         $this->jwk_manager = $jwk_manager;

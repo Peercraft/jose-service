@@ -5,6 +5,8 @@ namespace SpomkyLabs\Service;
 use Pimple\Container;
 use Jose\JWKInterface;
 use Jose\JWSInterface;
+use SpomkyLabs\Jose\SignatureInstruction;
+use SpomkyLabs\Jose\EncryptionInstruction;
 
 class Jose
 {
@@ -27,9 +29,10 @@ class Jose
 
     public static function getInstance()
     {
-        if(is_null(self::$_instance)) {
+        if (is_null(self::$_instance)) {
             self::$_instance = new Jose();
         }
+
         return self::$_instance;
     }
 
@@ -138,15 +141,38 @@ class Jose
         return $this->getLoader()->load($data);
     }
 
+    public function sign($payload, array $protected_header)
+    {
+        $key = $this->getJWKManager()->findByHeader($protected_header);
+        if (null === $key) {
+            throw new \Exception("Unable to determine the key used to sign the payload.");
+        }
+        $instruction = new SignatureInstruction();
+        $instruction->setKey($key)
+                    ->setProtectedHeader($protected_header);
+
+        return $this->getSigner()->sign($payload, array($instruction));
+    }
+
+    public function encrypt($payload, array $protected_header)
+    {
+        $key = $this->getJWKManager()->findByHeader($protected_header);
+        if (null === $key) {
+            throw new \Exception("Unable to determine the key used to sign the payload.");
+        }
+        $instruction = new EncryptionInstruction();
+        $instruction->setRecipientKey($key);
+
+        return $this->getEncrypter()->encrypt($payload, array($instruction), $protected_header);
+    }
+
     public function verify($jwt)
     {
         if (false === $this->getLoader()->verify($jwt)) {
             return false;
         }
-        if ($jwt instanceof JWSInterface) {
-            return $this->getLoader()->verifySignature($jwt);
-        }
-        return true;
+
+        return $jwt instanceof JWSInterface ? $this->getLoader()->verifySignature($jwt) : true;
     }
 
     public function addJWKKey($id, JWKInterface $key)

@@ -54,6 +54,5 @@ class JWAManager extends Base
                 printf("Unable to load algorithm %s. Message is: %s\n", $alg, $e->getMessage());
             }
         }
-
     }
 }

@@ -5,7 +5,6 @@ namespace SpomkyLabs\Service;
 use SpomkyLabs\Jose\JWKSet;
 use Jose\JWKManagerInterface;
 use Jose\JWKSetManager as Base;
-use Base64Url\Base64Url;
 
 /**
  */
