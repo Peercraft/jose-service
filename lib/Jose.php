@@ -39,21 +39,21 @@ class Jose
 
     private function setJWAManager()
     {
-        $this->container['JWAManager'] = function ($c) {
+        $this->container['JWAManager'] = function () {
             return new JWAManager();
         };
     }
 
     private function setJWTManager()
     {
-        $this->container['JWTManager'] = function ($c) {
+        $this->container['JWTManager'] = function () {
             return new JWTManager();
         };
     }
 
     private function setJWKManager()
     {
-        $this->container['JWKManager'] = function ($c) {
+        $this->container['JWKManager'] = function () {
             return new JWKManager();
         };
     }
@@ -69,7 +69,7 @@ class Jose
 
     private function setCompressionManager()
     {
-        $this->container['CompressionManager'] = function ($c) {
+        $this->container['CompressionManager'] = function () {
             return new CompressionManager();
         };
     }

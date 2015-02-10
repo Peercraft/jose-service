@@ -77,7 +77,7 @@ class JWKManager extends Base
 
     public function addECKey($id, $ec)
     {
-        $values = ECConverter::loadKey($ec, $passphrase);
+        $values = ECConverter::loadKeyFromFile($ec);
 
         return $this->addKeyFromValues($id, $values);
     }

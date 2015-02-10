@@ -32,7 +32,7 @@ class JWKSetManager extends Base
     {
         $key_set = new JWKSet();
         foreach ($values as $value) {
-            $key = $this->createJWK($value);
+            $key = $this->getJWKManager()->createJWK($value);
             $key_set->addKey($key);
         }
 
