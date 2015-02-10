@@ -3,6 +3,7 @@
 namespace SpomkyLabs\Service\Tests;
 
 use SpomkyLabs\Service\Jose;
+use Jose\JSONSerializationModes;
 
 class JoseServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,6 +12,15 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $jose = Jose::getInstance();
         $jose->addKeyFromValues(
             'e9bc097a-ce51-4036-9562-d2ade882db0d',
+            array(
+                "kty" => "EC",
+                "crv" => "P-256",
+                "x"   => "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+                "y"   => "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0",
+            )
+        );
+        $jose->addKeyFromValues(
+            'PRIVATE_EC',
             array(
                 "kty" => "EC",
                 "crv" => "P-256",
@@ -26,6 +36,8 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
                 "k"   => "GawgguFyGrWKav7AX4VKUg",
             )
         );
+        $jose->addRSAKey("PRIVATE_RSA", file_get_contents(__DIR__."/Keys/RSA/private.key"), "tests");
+        $jose->addRSAKey("PUBLIC_RSA", file_get_contents(__DIR__."/Keys/RSA/public.key"));
     }
 
     /**
@@ -132,6 +144,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $jose = Jose::getInstance();
 
         $jws = $jose->sign(
+            "PRIVATE_EC",
             "Je suis Charlie",
             array(
                 "alg" => "ES256",
@@ -143,11 +156,33 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      */
+    public function testCreateFlattenedJWS()
+    {
+        $jose = Jose::getInstance();
+
+        $jws = $jose->sign(
+            "PRIVATE_EC",
+            "Je suis Charlie",
+            array(
+                "alg" => "ES256",
+                "kid" => "e9bc097a-ce51-4036-9562-d2ade882db0d",
+            ),
+            array(
+                "foo"=>"bar",
+            ),
+            JSONSerializationModes::JSON_FLATTENED_SERIALIZATION
+        );
+        $this->assertTrue(is_string($jws));
+    }
+
+    /**
+     */
     public function testCreateCompactJWE()
     {
         $jose = Jose::getInstance();
 
         $jwe = $jose->encrypt(
+            "7",
             "Je suis Charlie",
             array(
                 "alg" => "A128KW",

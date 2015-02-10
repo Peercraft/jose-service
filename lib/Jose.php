@@ -5,6 +5,7 @@ namespace SpomkyLabs\Service;
 use Pimple\Container;
 use Jose\JWKInterface;
 use Jose\JWSInterface;
+use Jose\JSONSerializationModes;
 use SpomkyLabs\Jose\SignatureInstruction;
 use SpomkyLabs\Jose\EncryptionInstruction;
 
@@ -141,29 +142,30 @@ class Jose
         return $this->getLoader()->load($data);
     }
 
-    public function sign($payload, array $protected_header)
+    public function sign($kid, $payload, array $protected_header, array $unprotected_header = array(), $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION)
     {
-        $key = $this->getJWKManager()->findByHeader($protected_header);
+        $key = $this->getJWKManager()->getByKid($kid);
         if (null === $key) {
             throw new \Exception("Unable to determine the key used to sign the payload.");
         }
         $instruction = new SignatureInstruction();
         $instruction->setKey($key)
-                    ->setProtectedHeader($protected_header);
+                    ->setProtectedHeader($protected_header)
+                    ->setUnprotectedHeader($unprotected_header);
 
-        return $this->getSigner()->sign($payload, array($instruction));
+        return $this->getSigner()->sign($payload, array($instruction), $mode);
     }
 
-    public function encrypt($payload, array $protected_header)
+    public function encrypt($kid, $payload, array $protected_header, array $shared_unprotected_header = array(), $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION, $aad = null)
     {
-        $key = $this->getJWKManager()->findByHeader($protected_header);
+        $key = $this->getJWKManager()->getByKid($kid);
         if (null === $key) {
             throw new \Exception("Unable to determine the key used to sign the payload.");
         }
         $instruction = new EncryptionInstruction();
         $instruction->setRecipientKey($key);
 
-        return $this->getEncrypter()->encrypt($payload, array($instruction), $protected_header);
+        return $this->getEncrypter()->encrypt($payload, array($instruction), $protected_header, $shared_unprotected_header, $mode, $aad);
     }
 
     public function verify($jwt)

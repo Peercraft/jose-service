@@ -26,6 +26,11 @@ class JWKManager extends Base
         return $jwk;
     }
 
+    public function getByKid($id)
+    {
+        return $this->findByKid(array("kid"=>$id));
+    }
+
     protected function findByKid($header)
     {
         if (!isset($header['kid'])) {
