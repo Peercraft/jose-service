@@ -1,0 +1,39 @@
+{
+    "name": "spomky-labs/jose-service",
+    "description": "JSON Object Signing and Encryption service for PHP.",
+    "type": "project",
+    "license": "MIT",
+    "keywords": ["JWS", "JWT", "JWE", "JWA", "JWK", "JWKSet", "Jose"],
+    "homepage": "https://github.com/Spomky-Labs/jose-service",
+    "authors": [
+        {
+            "name": "Florent Morselli",
+            "homepage": "https://github.com/Spomky-Labs/jose-service/contributors"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "SpomkyLabs\\Service\\":  "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SpomkyLabs\\Service\\Tests\\":  "tests/"
+        }
+    },
+    "require": {
+        "php": ">=5.3",
+        "spomky-labs/jose": "dev-master",
+        "pimple/pimple": "~3.0.0"
+    },
+    "require-dev": {
+        "phpseclib/phpseclib": ">=0.3.5",
+        "mdanter/ecc": "~0.2",
+        "phpunit/phpunit": "4.*"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.0.x-dev"
+        }
+    }
+}
