@@ -9,9 +9,6 @@ use Jose\JWKSetManagerInterface;
 use Jose\Compression\CompressionManagerInterface;
 use SpomkyLabs\Jose\Loader as Base;
 
-/**
- * Class representing a JSON Web Signature.
- */
 class Loader extends Base
 {
     protected $audience;

@@ -2,6 +2,7 @@
 
 namespace SpomkyLabs\Service;
 
+use Jose\JWKSetInterface;
 use SpomkyLabs\Jose\JWKSet;
 use Jose\JWKManagerInterface;
 use Jose\JWKSetManager as Base;
@@ -10,6 +11,8 @@ use Jose\JWKSetManager as Base;
  */
 class JWKSetManager extends Base
 {
+    private $key_sets = array();
+
     protected $jwk_manager;
 
     public function __construct(JWKManagerInterface $jwk_manager)
@@ -37,5 +40,12 @@ class JWKSetManager extends Base
         }
 
         return $key_set;
+    }
+
+    public function addKeySet(JWKSetInterface $key_set)
+    {
+        $this->key_sets[] = $key_set;
+
+        return $this;
     }
 }

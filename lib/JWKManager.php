@@ -58,7 +58,7 @@ class JWKManager extends Base
         return $this;
     }
 
-    public function addBinaryKey($id, $value)
+    public function addSymmetricKey($id, $value)
     {
         $values = array(
             "kty" => "oct",

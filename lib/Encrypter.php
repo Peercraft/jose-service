@@ -9,9 +9,6 @@ use Jose\JWKSetManagerInterface;
 use Jose\Compression\CompressionManagerInterface;
 use SpomkyLabs\Jose\Encrypter as Base;
 
-/**
- * Class representing a JSON Web Signature.
- */
 class Encrypter extends Base
 {
     protected $jwt_manager;

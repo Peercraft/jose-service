@@ -7,9 +7,6 @@ use SpomkyLabs\Jose\JWS;
 use SpomkyLabs\Jose\JWE;
 use Jose\JWTManagerInterface;
 
-/**
- * Class representing a JSON Web Signature.
- */
 class JWTManager implements JWTManagerInterface
 {
     /**

@@ -7,7 +7,7 @@
     use SpomkyLabs\Service\Jose;
 
     $jose = Jose::getInstance();
-    $jose->addKeyFromValues(
+    $jose->getJWKManager()->addKeyFromValues(
         'e9bc097a-ce51-4036-9562-d2ade882db0d',
         array(
             "kty" => "EC",
@@ -35,7 +35,7 @@
     use SpomkyLabs\Service\Jose;
 
     $jose = Jose::getInstance();
-    $jose->addKeyFromValues(
+    $jose->getJWKManager()->addKeyFromValues(
         'e9bc097a-ce51-4036-9562-d2ade882db0d',
         array(
             "kty" => "EC",
@@ -65,7 +65,7 @@
     use SpomkyLabs\Service\Jose;
 
     $jose = Jose::getInstance();
-    $jose->addKeyFromValues(
+    $jose->getJWKManager()->addKeyFromValues(
         '7',
         array(
             "kty" => "oct",

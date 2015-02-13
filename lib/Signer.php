@@ -8,9 +8,6 @@ use Jose\JWTManagerInterface;
 use Jose\JWKSetManagerInterface;
 use SpomkyLabs\Jose\Signer as Base;
 
-/**
- * Class representing a JSON Web Signature.
- */
 class Signer extends Base
 {
     protected $jwt_manager;

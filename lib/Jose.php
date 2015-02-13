@@ -127,12 +127,12 @@ class Jose
         return $this->container['Loader'];
     }
 
-    private function getJWKManager()
+    public function getJWKManager()
     {
         return $this->container['JWKManager'];
     }
 
-    private function getJWKSetManager()
+    public function getJWKSetManager()
     {
         return $this->container['JWKSetManager'];
     }
@@ -160,7 +160,7 @@ class Jose
     {
         $key = $this->getJWKManager()->getByKid($kid);
         if (null === $key) {
-            throw new \Exception("Unable to determine the key used to sign the payload.");
+            throw new \Exception("Unable to determine the key used to encrypt the payload.");
         }
         $instruction = new EncryptionInstruction();
         $instruction->setRecipientKey($key);
@@ -175,30 +175,5 @@ class Jose
         }
 
         return $jwt instanceof JWSInterface ? $this->getLoader()->verifySignature($jwt) : true;
-    }
-
-    public function addJWKKey($id, JWKInterface $key)
-    {
-        return $this->getJWKManager()->addJWKKey($id, $key);
-    }
-
-    public function addBinaryKey($id, $value)
-    {
-        return $this->getJWKManager()->addBinaryKey($id, $value);
-    }
-
-    public function addRSAKey($id, $rsa, $passphrase = null)
-    {
-        return $this->getJWKManager()->addRSAKey($id, $rsa, $passphrase);
-    }
-
-    public function addECKey($id, $ec)
-    {
-        return $this->getJWKManager()->addECKey($id, $ec);
-    }
-
-    public function addKeyFromValues($id, array $values)
-    {
-        return $this->getJWKManager()->addKeyFromValues($id, $values);
     }
 }

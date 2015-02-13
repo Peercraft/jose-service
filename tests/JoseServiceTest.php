@@ -10,7 +10,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $jose = Jose::getInstance();
-        $jose->addKeyFromValues(
+        $jose->getJWKManager()->addKeyFromValues(
             'e9bc097a-ce51-4036-9562-d2ade882db0d',
             array(
                 "kty" => "EC",
@@ -19,7 +19,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
                 "y"   => "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0",
             )
         );
-        $jose->addKeyFromValues(
+        $jose->getJWKManager()->addKeyFromValues(
             'PRIVATE_EC',
             array(
                 "kty" => "EC",
@@ -29,15 +29,15 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
                 "d"   => "jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI",
             )
         );
-        $jose->addKeyFromValues(
+        $jose->getJWKManager()->addKeyFromValues(
             '7',
             array(
                 "kty" => "oct",
                 "k"   => "GawgguFyGrWKav7AX4VKUg",
             )
         );
-        $jose->addRSAKey("PRIVATE_RSA", file_get_contents(__DIR__."/Keys/RSA/private.key"), "tests");
-        $jose->addRSAKey("PUBLIC_RSA", file_get_contents(__DIR__."/Keys/RSA/public.key"));
+        $jose->getJWKManager()->addRSAKey("PRIVATE_RSA", file_get_contents(__DIR__."/Keys/RSA/private.key"), "tests");
+        $jose->getJWKManager()->addRSAKey("PUBLIC_RSA", file_get_contents(__DIR__."/Keys/RSA/public.key"));
     }
 
     /**
@@ -188,8 +188,16 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
                 "alg" => "A128KW",
                 "enc" => "A128CBC-HS256",
                 "kid" => "7",
+                "zip" => "DEF",
             )
         );
+
+        $result = $jose->load($jwe);
+
         $this->assertTrue(is_string($jwe));
+        $this->assertEquals("A128KW", $result->getAlgorithm());
+        $this->assertEquals("A128CBC-HS256", $result->getEncryptionAlgorithm());
+        $this->assertEquals("DEF", $result->getZip());
+        $this->assertEquals("Je suis Charlie", $result->getPayload());
     }
 }
