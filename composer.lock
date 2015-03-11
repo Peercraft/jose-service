@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3f25d8a62151971f90ec94df2e731a6e",
+    "hash": "11714c2a515f4bda875a9217cb741850",
     "packages": [
         {
             "name": "pimple/pimple",
@@ -166,12 +166,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Spomky-Labs/jose.git",
-                "reference": "0dfd9833b65eedeb645207d6f82d937ad3f39799"
+                "reference": "7ebcf56b4421bc425d6a8d6f89c2b72f7104a68a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Spomky-Labs/jose/zipball/0dfd9833b65eedeb645207d6f82d937ad3f39799",
-                "reference": "0dfd9833b65eedeb645207d6f82d937ad3f39799",
+                "url": "https://api.github.com/repos/Spomky-Labs/jose/zipball/7ebcf56b4421bc425d6a8d6f89c2b72f7104a68a",
+                "reference": "7ebcf56b4421bc425d6a8d6f89c2b72f7104a68a",
                 "shasum": ""
             },
             "require": {
@@ -225,7 +225,7 @@
                 "jwa",
                 "jwt"
             ],
-            "time": "2015-02-10 11:11:12"
+            "time": "2015-02-23 18:47:07"
         },
         {
             "name": "spomky-labs/jose-interface",

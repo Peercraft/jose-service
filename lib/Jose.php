@@ -112,17 +112,17 @@ class Jose
         };
     }
 
-    private function getSigner()
+    public function getSigner()
     {
         return $this->container['Signer'];
     }
 
-    private function getEncrypter()
+    public function getEncrypter()
     {
         return $this->container['Encrypter'];
     }
 
-    private function getLoader()
+    public function getLoader()
     {
         return $this->container['Loader'];
     }

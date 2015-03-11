@@ -29,7 +29,7 @@
     "require-dev": {
         "phpseclib/phpseclib": ">=0.3.5",
         "mdanter/ecc": "~0.2",
-        "phpunit/phpunit": "4.*"
+        "phpunit/phpunit": "~4.5"
     },
     "extra": {
         "branch-alias": {
