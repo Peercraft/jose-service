@@ -1,6 +1,6 @@
 <?php
 
-namespace SpomkyLabs\Service\Tests;
+namespace SpomkyLabs\Service\tests;
 
 use SpomkyLabs\Service\Jose;
 use Jose\JSONSerializationModes;
@@ -168,7 +168,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
                 "kid" => "e9bc097a-ce51-4036-9562-d2ade882db0d",
             ),
             array(
-                "foo"=>"bar",
+                "foo" => "bar",
             ),
             JSONSerializationModes::JSON_FLATTENED_SERIALIZATION
         );

@@ -3,7 +3,6 @@
 namespace SpomkyLabs\Service;
 
 use Pimple\Container;
-use Jose\JWKInterface;
 use Jose\JWSInterface;
 use Jose\JSONSerializationModes;
 use SpomkyLabs\Jose\SignatureInstruction;

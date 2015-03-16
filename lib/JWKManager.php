@@ -28,7 +28,7 @@ class JWKManager extends Base
 
     public function getByKid($id)
     {
-        return $this->findByKid(array("kid"=>$id));
+        return $this->findByKid(array("kid" => $id));
     }
 
     protected function findByKid($header)
