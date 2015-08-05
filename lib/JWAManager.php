@@ -6,6 +6,9 @@ use SpomkyLabs\Jose\JWAManager as Base;
 
 class JWAManager extends Base
 {
+    /**
+     * @param \SpomkyLabs\Service\Configuration $config
+     */
     public function __construct(Configuration $config)
     {
         if (! is_array($config->get('Algorithms'))) {
@@ -24,6 +27,9 @@ class JWAManager extends Base
         }
     }
 
+    /**
+     * @return array
+     */
     private function getAvailableAlgorithms()
     {
         return array(

@@ -10,9 +10,19 @@ use SpomkyLabs\Jose\EncryptionInstruction;
 
 class Jose
 {
+    /**
+     * @var null|\SpomkyLabs\Service\Jose
+     */
     private static $_instance = null;
+
+    /**
+     * @var \Pimple\Container
+     */
     private $container;
 
+    /**
+     *
+     */
     private function __construct()
     {
         $this->container = new Container();
@@ -28,6 +38,9 @@ class Jose
         $this->setEncrypter();
     }
 
+    /**
+     * @return \SpomkyLabs\Service\Jose
+     */
     public static function getInstance()
     {
         if (is_null(self::$_instance)) {
@@ -37,6 +50,9 @@ class Jose
         return self::$_instance;
     }
 
+    /**
+     *
+     */
     private function setConfiguration()
     {
         $this->container['Configuration'] = function () {
@@ -44,6 +60,9 @@ class Jose
         };
     }
 
+    /**
+     *
+     */
     private function setJWAManager()
     {
         $this->container['JWAManager'] = function ($c) {
@@ -53,6 +72,9 @@ class Jose
         };
     }
 
+    /**
+     *
+     */
     private function setJWTManager()
     {
         $this->container['JWTManager'] = function () {
@@ -60,6 +82,9 @@ class Jose
         };
     }
 
+    /**
+     *
+     */
     private function setJWKManager()
     {
         $this->container['JWKManager'] = function () {
@@ -67,6 +92,9 @@ class Jose
         };
     }
 
+    /**
+     *
+     */
     private function setJWKSetManager()
     {
         $this->container['JWKSetManager'] = function ($c) {
@@ -76,6 +104,9 @@ class Jose
         };
     }
 
+    /**
+     *
+     */
     private function setCompressionManager()
     {
         $this->container['CompressionManager'] = function ($c) {
@@ -85,6 +116,9 @@ class Jose
         };
     }
 
+    /**
+     *
+     */
     private function setSigner()
     {
         $this->container['Signer'] = function ($c) {
@@ -97,6 +131,9 @@ class Jose
         };
     }
 
+    /**
+     *
+     */
     private function setLoader()
     {
         $this->container['Loader'] = function ($c) {
@@ -110,6 +147,9 @@ class Jose
         };
     }
 
+    /**
+     *
+     */
     private function setEncrypter()
     {
         $this->container['Encrypter'] = function ($c) {
@@ -158,7 +198,7 @@ class Jose
     /**
      * @return \SpomkyLabs\Service\JWKManager
      */
-    public function getJWKManager()
+    public function getKeyManager()
     {
         return $this->container['JWKManager'];
     }
@@ -166,7 +206,7 @@ class Jose
     /**
      * @return \SpomkyLabs\Service\JWKSetManager
      */
-    public function getJWKSetManager()
+    public function getKeysetManager()
     {
         return $this->container['JWKSetManager'];
     }
@@ -194,7 +234,7 @@ class Jose
      */
     public function sign($kid, $payload, array $protected_header, array $unprotected_header = array(), $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION)
     {
-        $key = $this->getJWKManager()->getByKid($kid);
+        $key = $this->getKeyManager()->getByKid($kid);
         if (null === $key) {
             throw new \Exception('Unable to determine the key used to sign the payload.');
         }
@@ -220,7 +260,7 @@ class Jose
      */
     public function encrypt($kid, $payload, array $protected_header, array $shared_unprotected_header = array(), $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION, $aad = null)
     {
-        $key = $this->getJWKManager()->getByKid($kid);
+        $key = $this->getKeyManager()->getByKid($kid);
         if (null === $key) {
             throw new \Exception('Unable to determine the key used to encrypt the payload.');
         }

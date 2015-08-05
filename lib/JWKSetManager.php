@@ -11,8 +11,14 @@ use Jose\JWKSetManager as Base;
  */
 class JWKSetManager extends Base
 {
+    /**
+     * @var array
+     */
     private $key_sets = array();
 
+    /**
+     * @var \Jose\JWKManagerInterface
+     */
     protected $jwk_manager;
 
     public function __construct(JWKManagerInterface $jwk_manager)
@@ -42,6 +48,11 @@ class JWKSetManager extends Base
         return $key_set;
     }
 
+    /**
+     * @param \Jose\JWKSetInterface $key_set
+     *
+     * @return $this
+     */
     public function addKeySet(JWKSetInterface $key_set)
     {
         $this->key_sets[] = $key_set;

@@ -6,6 +6,9 @@ use SpomkyLabs\Jose\Compression\CompressionManager as Base;
 
 class CompressionManager extends Base
 {
+    /**
+     * @param \SpomkyLabs\Service\Configuration $config
+     */
     public function __construct(Configuration $config)
     {
         if (! is_array($config->get('Compression'))) {
@@ -24,6 +27,9 @@ class CompressionManager extends Base
         }
     }
 
+    /**
+     * @return array
+     */
     private function getAvailableCompressionAlgorithms()
     {
         return array(

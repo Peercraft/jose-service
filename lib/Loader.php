@@ -11,13 +11,43 @@ use SpomkyLabs\Jose\Loader as Base;
 
 class Loader extends Base
 {
+    /**
+     * @var string
+     */
     protected $audience;
+
+    /**
+     * @var \Jose\JWTManagerInterface
+     */
     protected $jwt_manager;
+
+    /**
+     * @var \Jose\JWAManagerInterface
+     */
     protected $jwa_manager;
+
+    /**
+     * @var \Jose\JWKManagerInterface
+     */
     protected $jwk_manager;
+
+    /**
+     * @var \Jose\JWKSetManagerInterface
+     */
     protected $jwkset_manager;
+
+    /**
+     * @var \Jose\Compression\CompressionManagerInterface
+     */
     protected $compression_manager;
 
+    /**
+     * @param \Jose\JWAManagerInterface                     $jwa_manager
+     * @param \Jose\JWTManagerInterface                     $jwt_manager
+     * @param \Jose\JWKManagerInterface                     $jwk_manager
+     * @param \Jose\JWKSetManagerInterface                  $jwkset_manager
+     * @param \Jose\Compression\CompressionManagerInterface $compression_manager
+     */
     public function __construct(
         JWAManagerInterface    $jwa_manager,
         JWTManagerInterface    $jwt_manager,
@@ -32,6 +62,11 @@ class Loader extends Base
         $this->compression_manager = $compression_manager;
     }
 
+    /**
+     * @param string $audience
+     *
+     * @return $this
+     */
     public function setAudience($audience)
     {
         $this->audience = $audience;
@@ -39,6 +74,9 @@ class Loader extends Base
         return $this;
     }
 
+    /**
+     * @return string
+     */
     protected function getAudience()
     {
         return $this->audience;

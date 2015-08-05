@@ -10,11 +10,32 @@ use SpomkyLabs\Jose\Signer as Base;
 
 class Signer extends Base
 {
+    /**
+     * @var \Jose\JWTManagerInterface
+     */
     protected $jwt_manager;
+
+    /**
+     * @var \Jose\JWAManagerInterface
+     */
     protected $jwa_manager;
+
+    /**
+     * @var \Jose\JWKManagerInterface
+     */
     protected $jwk_manager;
+
+    /**
+     * @var \Jose\JWKSetManagerInterface
+     */
     protected $jwkset_manager;
 
+    /**
+     * @param \Jose\JWAManagerInterface    $jwa_manager
+     * @param \Jose\JWTManagerInterface    $jwt_manager
+     * @param \Jose\JWKManagerInterface    $jwk_manager
+     * @param \Jose\JWKSetManagerInterface $jwkset_manager
+     */
     public function __construct(
         JWAManagerInterface    $jwa_manager,
         JWTManagerInterface    $jwt_manager,

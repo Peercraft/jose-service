@@ -13,6 +13,9 @@ use SpomkyLabs\Jose\Util\RSAConverter;
  */
 class JWKManager extends Base
 {
+    /**
+     * @var array
+     */
     private $keys = array();
 
     /**
@@ -26,11 +29,21 @@ class JWKManager extends Base
         return $jwk;
     }
 
+    /**
+     * @param $id
+     *
+     * @return null|\Jose\JWKInterface
+     */
     public function getByKid($id)
     {
         return $this->findByKid(array('kid' => $id));
     }
 
+    /**
+     * @param $header
+     *
+     * @return null|\Jose\JWKInterface
+     */
     protected function findByKid($header)
     {
         if (!isset($header['kid'])) {
@@ -40,6 +53,9 @@ class JWKManager extends Base
         return array_key_exists($header['kid'], $this->keys) ? $this->keys[$header['kid']] : null;
     }
 
+    /**
+     * @return array
+     */
     protected function getSupportedMethods()
     {
         return array_merge(
@@ -50,6 +66,12 @@ class JWKManager extends Base
         );
     }
 
+    /**
+     * @param string             $id
+     * @param \Jose\JWKInterface $key
+     *
+     * @return $this
+     */
     public function addJWKKey($id, JWKInterface $key)
     {
         $this->checkId($id);
@@ -58,6 +80,12 @@ class JWKManager extends Base
         return $this;
     }
 
+    /**
+     * @param string $id
+     * @param string $value
+     *
+     * @return $this
+     */
     public function addSymmetricKey($id, $value)
     {
         $values = array(
@@ -68,20 +96,49 @@ class JWKManager extends Base
         return $this->addKeyFromValues($id, $values);
     }
 
-    public function addRSAKey($id, $rsa, $passphrase = null)
+    /**
+     * @param string $id
+     * @param string $rsa
+     * @param null|string $passphrase
+     *
+     * @return $this
+     */
+    public function addRSAKeyFromFile($id, $rsa, $passphrase = null)
     {
         $values = RSAConverter::loadKeyFromFile($rsa, $passphrase);
 
         return $this->addKeyFromValues($id, $values);
     }
 
-    public function addECKey($id, $ec)
+    /**
+     * @param string $id
+     * @param string $resource
+     *
+     * @return $this
+     */
+    public function addRSAKeyFromOpenSSLResource($id, $resource)
+    {
+        $values = RSAConverter::loadKeyFromOpenSSLResource($resource);
+
+        return $this->addKeyFromValues($id, $values);
+    }
+
+    /**
+     * @param string $id
+     * @param string $ec
+     *
+     * @return $this|\SpomkyLabs\Service\JWKManager
+     */
+    public function addECKeyFromFile($id, $ec)
     {
         $values = ECConverter::loadKeyFromFile($ec);
 
         return $this->addKeyFromValues($id, $values);
     }
 
+    /**
+     * @param string $id
+     */
     private function checkId($id)
     {
         if (!is_string($id)) {
@@ -89,6 +146,12 @@ class JWKManager extends Base
         }
     }
 
+    /**
+     * @param string $id
+     * @param array $values
+     *
+     * @return $this
+     */
     public function addKeyFromValues($id, array $values)
     {
         $this->checkId($id);
