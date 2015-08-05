@@ -2,9 +2,6 @@
 
 namespace SpomkyLabs\Service;
 
-use SpomkyLabs\Jose\Compression\GZip;
-use SpomkyLabs\Jose\Compression\ZLib;
-use SpomkyLabs\Jose\Compression\Deflate;
 use SpomkyLabs\Jose\Compression\CompressionManager as Base;
 
 class CompressionManager extends Base
