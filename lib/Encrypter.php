@@ -82,10 +82,20 @@ class Encrypter extends Base
     }
 
     /**
-     * @param integer $length
+     * @param int $length
      */
     private function generateRandomString($length)
     {
-        return crypt_random_string($length);
+        if (function_exists('random_bytes')) {
+            return random_bytes($length); //PHP 7
+        } elseif (function_exists('openssl_random_pseudo_bytes')) {
+            return openssl_random_pseudo_bytes($length); // Library OpenSSL
+        } elseif (function_exists('mcrypt_create_iv')) {
+            return mcrypt_create_iv($length); // Extension MCrypt
+        } elseif (class_exists('\phpseclib\Crypt\Random')) {
+            return \phpseclib\Crypt\Random::string($length); // PHPSecLib
+        } else {
+            throw new \Exception('Unable to create a random string');
+        }
     }
 }

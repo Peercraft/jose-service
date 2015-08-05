@@ -6,53 +6,63 @@ use SpomkyLabs\Jose\JWAManager as Base;
 
 class JWAManager extends Base
 {
-    public function __construct()
+    public function __construct(Configuration $config)
     {
-        $algorithms = array(
-            "Signature\HS256",
-            "Signature\HS384",
-            "Signature\HS512",
-            "Signature\ES256",
-            "Signature\ES384",
-            "Signature\ES512",
-            "Signature\None",
-            "Signature\RS256",
-            "Signature\RS384",
-            "Signature\RS512",
-            "Signature\PS256",
-            "Signature\PS384",
-            "Signature\PS512",
-            "ContentEncryption\A128GCM",
-            "ContentEncryption\A192GCM",
-            "ContentEncryption\A256GCM",
-            "ContentEncryption\A128CBCHS256",
-            "ContentEncryption\A192CBCHS384",
-            "ContentEncryption\A256CBCHS512",
-            "KeyEncryption\A128KW",
-            "KeyEncryption\A192KW",
-            "KeyEncryption\A256KW",
-            "KeyEncryption\A128GCMKW",
-            "KeyEncryption\A192GCMKW",
-            "KeyEncryption\A256GCMKW",
-            "KeyEncryption\Dir",
-            "KeyEncryption\ECDHES",
-            "KeyEncryption\ECDHESA128KW",
-            "KeyEncryption\ECDHESA192KW",
-            "KeyEncryption\ECDHESA256KW",
-            "KeyEncryption\PBES2HS256A128KW",
-            "KeyEncryption\PBES2HS384A192KW",
-            "KeyEncryption\PBES2HS512A256KW",
-            "KeyEncryption\RSA15",
-            "KeyEncryption\RSAOAEP",
-            "KeyEncryption\RSAOAEP256",
-        );
-        foreach ($algorithms as $algorithm) {
-            $alg = "SpomkyLabs\Jose\Algorithm\\".$algorithm;
-            try {
-                $this->addAlgorithm(new $alg());
-            } catch (\Exception $e) {
-                printf("Unable to load algorithm %s. Message is: %s\n", $alg, $e->getMessage());
+        if (! is_array($config->get('Algorithm'))) {
+            return;
+        }
+        $algs = $this->getAvailableAlgorithms();
+        foreach ($config->get('Algorithm') as $alg) {
+            if (array_key_exists($alg, $algs)) {
+                $class = 'SpomkyLabs\Jose\Algorithm\\'.$algs[$alg];
+                try {
+                    $this->addAlgorithm(new $class());
+                } catch (\Exception $e) {
+                    printf('Unable to load algorithm %s. Message is: %s\n', $alg, $e->getMessage());
+                }
             }
         }
+    }
+
+    private function getAvailableAlgorithms()
+    {
+        return array(
+            'HS256' => 'Signature\HS256',
+            'HS384' => 'Signature\HS384',
+            'HS512' => 'Signature\HS512',
+            'ES256' => 'Signature\ES256',
+            'ES384' => 'Signature\ES384',
+            'ES512' => 'Signature\ES512',
+            'none' => 'Signature\None',
+            'RS256' => 'Signature\RS256',
+            'RS384' => 'Signature\RS384',
+            'RS512' => 'Signature\RS512',
+            'PS256' => 'Signature\PS256',
+            'PS384' => 'Signature\PS384',
+            'PS512' => 'Signature\PS512',
+            'A128GCM' => 'ContentEncryption\A128GCM',
+            'A192GCM' => 'ContentEncryption\A192GCM',
+            'A256GCM' => 'ContentEncryption\A256GCM',
+            'A128CBC-HS256' => 'ContentEncryption\A128CBCHS256',
+            'A192CBC-HS384' => 'ContentEncryption\A192CBCHS384',
+            'A256CBC-HS512' => 'ContentEncryption\A256CBCHS512',
+            'A128KW' => 'KeyEncryption\A128KW',
+            'A192KW' => 'KeyEncryption\A192KW',
+            'A256KW' => 'KeyEncryption\A256KW',
+            'A128GCMKW' => 'KeyEncryption\A128GCMKW',
+            'A192GCMKW' => 'KeyEncryption\A192GCMKW',
+            'A256GCMKW' => 'KeyEncryption\A256GCMKW',
+            'dir' => 'KeyEncryption\Dir',
+            'ECDH-ES' => 'KeyEncryption\ECDHES',
+            'ECDH-ES+A128KW' => 'KeyEncryption\ECDHESA128KW',
+            'ECDH-ES+A192KW' => 'KeyEncryption\ECDHESA192KW',
+            'ECDH-ES+A256KW' => 'KeyEncryption\ECDHESA256KW',
+            'PBES2-HS256+A128KW' => 'KeyEncryption\PBES2HS256A128KW',
+            'PBES2-HS384+A192KW' => 'KeyEncryption\PBES2HS384A192KW',
+            'PBES2-HS512+A256KW' => 'KeyEncryption\PBES2HS512A256KW',
+            'RSA1_5' => 'KeyEncryption\RSA15',
+            'RSA-OAEP' => 'KeyEncryption\RSAOAEP',
+            'RSA-OAEP-256' => 'KeyEncryption\RSAOAEP256',
+        );
     }
 }

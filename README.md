@@ -1,4 +1,4 @@
-# PHP JOSE Library
+# PHP JOSE Service
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Spomky-Labs/jose-service/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Spomky-Labs/jose-service/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/Spomky-Labs/jose-service/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Spomky-Labs/jose-service/?branch=master)
@@ -10,22 +10,7 @@
 [![Latest Stable Version](https://poser.pugx.org/Spomky-Labs/jose-service/v/stable.png)](https://packagist.org/packages/Spomky-Labs/jose-service) [![Total Downloads](https://poser.pugx.org/Spomky-Labs/jose-service/downloads.png)](https://packagist.org/packages/Spomky-Labs/jose-service) [![Latest Unstable Version](https://poser.pugx.org/Spomky-Labs/jose-service/v/unstable.png)](https://packagist.org/packages/Spomky-Labs/jose-service) [![License](https://poser.pugx.org/Spomky-Labs/jose-service/license.png)](https://packagist.org/packages/Spomky-Labs/jose-service)
 
 ## The Release Process ##
-
-We manage the releases of the library through features and time-based models.
-
-- A new patch version comes out every month when you made backwards-compatible bug fixes.
-- A new minor version comes every six months when we added functionality in a backwards-compatible manner.
-- A new major version comes every year when we make incompatible API changes.
-
-The meaning of "patch" "minor" and "major" comes from the Semantic [Versioning strategy](http://semver.org/).
-
-This release process applies for all versions.
-
-### Backwards Compatibility
-
-We allow developers to upgrade with confidence from one minor version to the next one.
-
-Whenever keeping backward compatibility is not possible, the feature, the enhancement or the bug fix will be scheduled for the next major version.
+The release process [is described here](doc/Release.md).
 
 ## Prerequisites ##
 
@@ -34,7 +19,8 @@ This library needs at least
 * `PHP 5.4`.
 
 It has been successfully tested using `PHP 5.4` to `PHP 5.6`.
-Tests with `HHVM` fail because of `phpseclib/phpseclib` which is not compatible.
+
+Tests with `PHP 7` and `HHVM` are incomplete because of [PHP Crypto](https://github.com/bukka/php-crypto).
 
 ## Installation ##
 

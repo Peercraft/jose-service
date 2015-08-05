@@ -28,7 +28,7 @@ class JWKManager extends Base
 
     public function getByKid($id)
     {
-        return $this->findByKid(array("kid" => $id));
+        return $this->findByKid(array('kid' => $id));
     }
 
     protected function findByKid($header)
@@ -61,8 +61,8 @@ class JWKManager extends Base
     public function addSymmetricKey($id, $value)
     {
         $values = array(
-            "kty" => "oct",
-            "k"   => Base64Url::encode($value),
+            'kty' => 'oct',
+            'k'   => Base64Url::encode($value),
         );
 
         return $this->addKeyFromValues($id, $values);
@@ -85,7 +85,7 @@ class JWKManager extends Base
     private function checkId($id)
     {
         if (!is_string($id)) {
-            throw new \InvalidArgumentException("ID must be a string.");
+            throw new \InvalidArgumentException('ID must be a string.');
         }
     }
 
