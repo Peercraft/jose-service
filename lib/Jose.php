@@ -17,6 +17,7 @@ class Jose
     {
         $this->container = new Container();
 
+        $this->setConfiguration();
         $this->setJWAManager();
         $this->setJWTManager();
         $this->setJWKManager();
@@ -36,10 +37,19 @@ class Jose
         return self::$_instance;
     }
 
+    private function setConfiguration()
+    {
+        $this->container['Configuration'] = function () {
+            return new Configuration();
+        };
+    }
+
     private function setJWAManager()
     {
-        $this->container['JWAManager'] = function () {
-            return new JWAManager();
+        $this->container['JWAManager'] = function ($c) {
+            return new JWAManager(
+                $c['Configuration']
+            );
         };
     }
 
@@ -68,8 +78,10 @@ class Jose
 
     private function setCompressionManager()
     {
-        $this->container['CompressionManager'] = function () {
-            return new CompressionManager();
+        $this->container['CompressionManager'] = function ($c) {
+            return new CompressionManager(
+                $c['Configuration']
+            );
         };
     }
 
@@ -111,41 +123,80 @@ class Jose
         };
     }
 
+    /**
+     * @return \SpomkyLabs\Service\Configuration
+     */
+    public function getConfiguration()
+    {
+        return $this->container['Configuration'];
+    }
+
+    /**
+     * @return \SpomkyLabs\Service\Signer
+     */
     public function getSigner()
     {
         return $this->container['Signer'];
     }
 
+    /**
+     * @return \SpomkyLabs\Service\Encrypter
+     */
     public function getEncrypter()
     {
         return $this->container['Encrypter'];
     }
 
+    /**
+     * @return \SpomkyLabs\Service\Loader
+     */
     public function getLoader()
     {
         return $this->container['Loader'];
     }
 
+    /**
+     * @return \SpomkyLabs\Service\JWKManager
+     */
     public function getJWKManager()
     {
         return $this->container['JWKManager'];
     }
 
+    /**
+     * @return \SpomkyLabs\Service\JWKSetManager
+     */
     public function getJWKSetManager()
     {
         return $this->container['JWKSetManager'];
     }
 
+    /**
+     * @param string $data
+     *
+     * @return array|\Jose\JWEInterface|\Jose\JWEInterface[]|\Jose\JWSInterface|\Jose\JWSInterface[]|null
+     */
     public function load($data)
     {
         return $this->getLoader()->load($data);
     }
 
+    /**
+     * @param string $kid
+     * @param mixed  $payload
+     * @param array  $protected_header
+     * @param array  $unprotected_header
+     * @param string $mode
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
     public function sign($kid, $payload, array $protected_header, array $unprotected_header = array(), $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION)
     {
         $key = $this->getJWKManager()->getByKid($kid);
         if (null === $key) {
-            throw new \Exception("Unable to determine the key used to sign the payload.");
+            throw new \Exception('Unable to determine the key used to sign the payload.');
         }
         $instruction = new SignatureInstruction();
         $instruction->setKey($key)
@@ -155,11 +206,23 @@ class Jose
         return $this->getSigner()->sign($payload, array($instruction), $mode);
     }
 
+    /**
+     * @param string $kid
+     * @param mixed  $payload
+     * @param array  $protected_header
+     * @param array  $shared_unprotected_header
+     * @param string $mode
+     * @param null   $aad
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
     public function encrypt($kid, $payload, array $protected_header, array $shared_unprotected_header = array(), $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION, $aad = null)
     {
         $key = $this->getJWKManager()->getByKid($kid);
         if (null === $key) {
-            throw new \Exception("Unable to determine the key used to encrypt the payload.");
+            throw new \Exception('Unable to determine the key used to encrypt the payload.');
         }
         $instruction = new EncryptionInstruction();
         $instruction->setRecipientKey($key);
@@ -167,6 +230,11 @@ class Jose
         return $this->getEncrypter()->encrypt($payload, array($instruction), $protected_header, $shared_unprotected_header, $mode, $aad);
     }
 
+    /**
+     * @param mixed $jwt
+     *
+     * @return bool
+     */
     public function verify($jwt)
     {
         if (false === $this->getLoader()->verify($jwt)) {

@@ -23,14 +23,15 @@
     },
     "require": {
         "php": ">=5.3",
-        "spomky-labs/jose": "~0.0.3",
+        "spomky-labs/jose": "~0.0.8",
         "pimple/pimple": "~3.0.0"
     },
     "require-dev": {
-        "phpseclib/phpseclib": ">=0.3.5",
-        "mdanter/ecc": "~0.2",
+        "phpseclib/phpseclib": "~2.0.0",
+        "mdanter/ecc": "~0.3",
         "phpunit/phpunit": "~4.5",
         "lib-openssl": "*",
+        "ext-mcrypt": "*",
         "spomky-labs/pbkdf2": "~1.0",
         "spomky-labs/aes-key-wrap": "~2.0"
     },
