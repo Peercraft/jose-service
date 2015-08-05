@@ -10,7 +10,7 @@ class Configuration
     /**
      * @var array
      */
-    protected $options;
+    private $options;
 
     /**
      * @param array $options
@@ -21,7 +21,10 @@ class Configuration
     }
 
     /**
-     * @inheritdoc
+     * @param string $name
+     * @param mixed $default
+     *
+     * @return null|mixed
      */
     public function get($name, $default = null)
     {
@@ -29,7 +32,8 @@ class Configuration
     }
 
     /**
-     * @inheritdoc
+     * @param string $name
+     * @param string $value
      */
     public function set($name, $value)
     {
@@ -37,7 +41,9 @@ class Configuration
     }
 
     /**
-     * @inheritdoc
+     * @param string $name
+     *
+     * @return $this
      */
     public function remove($name)
     {
@@ -49,7 +55,7 @@ class Configuration
     }
 
     /**
-     * @inheritdoc
+     * @return array
      */
     public function getConfigurationKeys()
     {

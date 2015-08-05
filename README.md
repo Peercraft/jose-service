@@ -9,6 +9,8 @@
 
 [![Latest Stable Version](https://poser.pugx.org/Spomky-Labs/jose-service/v/stable.png)](https://packagist.org/packages/Spomky-Labs/jose-service) [![Total Downloads](https://poser.pugx.org/Spomky-Labs/jose-service/downloads.png)](https://packagist.org/packages/Spomky-Labs/jose-service) [![Latest Unstable Version](https://poser.pugx.org/Spomky-Labs/jose-service/v/unstable.png)](https://packagist.org/packages/Spomky-Labs/jose-service) [![License](https://poser.pugx.org/Spomky-Labs/jose-service/license.png)](https://packagist.org/packages/Spomky-Labs/jose-service)
 
+This project uses [Spomky-Labs/jose](https://github.com/Spomky-Labs/jose) to ease encryption/decryption and signature/verification of JWS and JWE.
+
 ## The Release Process ##
 The release process [is described here](doc/Release.md).
 
@@ -20,7 +22,7 @@ This library needs at least
 
 It has been successfully tested using `PHP 5.4` to `PHP 5.6`.
 
-Tests with `PHP 7` and `HHVM` are incomplete because of [PHP Crypto](https://github.com/bukka/php-crypto).
+Tests with `PHP 7` and `HHVM` are incomplete because of some optional dependencies not available on these platforms.
 
 ## Installation ##
 

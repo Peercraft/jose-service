@@ -54,7 +54,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
             'RSA-OAEP-256',
         ));
 
-        $jose->getJWKManager()->addKeyFromValues(
+        $jose->getKeyManager()->addKeyFromValues(
             'e9bc097a-ce51-4036-9562-d2ade882db0d',
             array(
                 'kty' => 'EC',
@@ -63,7 +63,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
                 'y'   => 'x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0',
             )
         );
-        $jose->getJWKManager()->addKeyFromValues(
+        $jose->getKeyManager()->addKeyFromValues(
             'PRIVATE_EC',
             array(
                 'kty' => 'EC',
@@ -73,15 +73,15 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
                 'd'   => 'jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI',
             )
         );
-        $jose->getJWKManager()->addKeyFromValues(
+        $jose->getKeyManager()->addKeyFromValues(
             '7',
             array(
                 'kty' => 'oct',
                 'k'   => 'GawgguFyGrWKav7AX4VKUg',
             )
         );
-        $jose->getJWKManager()->addRSAKey('PRIVATE_RSA', file_get_contents(__DIR__.'/Keys/RSA/private.key'), 'tests');
-        $jose->getJWKManager()->addRSAKey('PUBLIC_RSA', file_get_contents(__DIR__.'/Keys/RSA/public.key'));
+        $jose->getKeyManager()->addRSAKeyFromFile('PRIVATE_RSA', file_get_contents(__DIR__.'/Keys/RSA/private.key'), 'tests');
+        $jose->getKeyManager()->addRSAKeyFromFile('PUBLIC_RSA', file_get_contents(__DIR__.'/Keys/RSA/public.key'));
     }
 
     /**
@@ -97,7 +97,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Jose\JWSInterface', $result);
         $this->assertEquals(array('iss' => 'joe', 'exp' => 1300819380, 'http://example.com/is_root' => true), $result->getPayload());
         $this->assertEquals('ES256', $result->getAlgorithm());
-        $jose->verify($result);
+        $this->assertTrue($jose->verify($result));
     }
 
     public function testLoadFlattenedJWE()
@@ -110,7 +110,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Live long and prosper.', $result->getPayload());
         $this->assertEquals('A128KW', $result->getAlgorithm());
         $this->assertEquals('A128CBC-HS256', $result->getEncryptionAlgorithm());
-        $jose->verify($result);
+        $this->assertTrue($jose->verify($result));
     }
 
     /**
@@ -128,7 +128,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Jose\JWSInterface', $result);
         $this->assertEquals(array('iss' => 'joe', 'exp' => 1300819380, 'http://example.com/is_root' => true), $result->getPayload());
         $this->assertEquals('HS256', $result->getAlgorithm());
-        $jose->verify($result);
+        $this->assertTrue($jose->verify($result));
     }
 
     /**
@@ -146,7 +146,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Jose\JWSInterface', $result);
         $this->assertEquals(array('iss' => 'joe', 'exp' => 1300819380, 'http://example.com/is_root' => true), $result->getPayload());
         $this->assertEquals('RS256', $result->getAlgorithm());
-        $jose->verify($result);
+        $this->assertTrue($jose->verify($result));
     }
 
     /**
@@ -164,7 +164,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Jose\JWSInterface', $result);
         $this->assertEquals(array('iss' => 'joe', 'exp' => 1300819380, 'http://example.com/is_root' => true), $result->getPayload());
         $this->assertEquals('ES256', $result->getAlgorithm());
-        $jose->verify($result);
+        $this->assertTrue($jose->verify($result));
     }
 
     /**

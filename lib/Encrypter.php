@@ -11,12 +11,38 @@ use SpomkyLabs\Jose\Encrypter as Base;
 
 class Encrypter extends Base
 {
-    protected $jwt_manager;
-    protected $jwa_manager;
-    protected $jwk_manager;
-    protected $jwkset_manager;
-    protected $compression_manager;
+    /**
+     * @var \Jose\JWTManagerInterface
+     */
+    private $jwt_manager;
 
+    /**
+     * @var \Jose\JWAManagerInterface
+     */
+    private $jwa_manager;
+
+    /**
+     * @var \Jose\JWKManagerInterface
+     */
+    private $jwk_manager;
+
+    /**
+     * @var \Jose\JWKSetManagerInterface
+     */
+    private $jwkset_manager;
+
+    /**
+     * @var \Jose\Compression\CompressionManagerInterface
+     */
+    private $compression_manager;
+
+    /**
+     * @param \Jose\JWAManagerInterface                     $jwa_manager
+     * @param \Jose\JWTManagerInterface                     $jwt_manager
+     * @param \Jose\JWKManagerInterface                     $jwk_manager
+     * @param \Jose\JWKSetManagerInterface                  $jwkset_manager
+     * @param \Jose\Compression\CompressionManagerInterface $compression_manager
+     */
     public function __construct(
         JWAManagerInterface    $jwa_manager,
         JWTManagerInterface    $jwt_manager,
@@ -71,18 +97,33 @@ class Encrypter extends Base
         return $this->compression_manager;
     }
 
+    /**
+     * @param int $size
+     *
+     * @return string
+     * @throws \Exception
+     */
     protected function createCEK($size)
     {
         return $this->generateRandomString($size / 8);
     }
 
+    /**
+     * @param int $size
+     *
+     * @return string
+     * @throws \Exception
+     */
     protected function createIV($size)
     {
         return $this->generateRandomString($size / 8);
     }
 
     /**
-     * @param int $length
+     * @param $length
+     *
+     * @return string
+     * @throws \Exception
      */
     private function generateRandomString($length)
     {

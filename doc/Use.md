@@ -12,7 +12,7 @@
     $jose->getConfiguration->set('Algorithms', array('ES256'));
     
     //We add a key. Its ID (kid) is 'e9bc097a-ce51-4036-9562-d2ade882db0d'
-    $jose->getJWKManager()->addKeyFromValues(
+    $jose->getKeyManager()->addKeyFromValues(
         'e9bc097a-ce51-4036-9562-d2ade882db0d',
         array(
             "kty" => "EC",
@@ -44,7 +44,7 @@
     
     $jose->getConfiguration->set('Algorithms', array('ES256'));
     
-    $jose->getJWKManager()->addKeyFromValues(
+    $jose->getKeyManager()->addKeyFromValues(
         'e9bc097a-ce51-4036-9562-d2ade882db0d',
         array(
             "kty" => "EC",
@@ -82,7 +82,7 @@
     //We also want to compress the data
     $jose->getConfiguration()->set('Compression', array('DEF'));
     
-    $jose->getJWKManager()->addKeyFromValues(
+    $jose->getKeyManager()->addKeyFromValues(
         '7',
         array(
             "kty" => "oct",
