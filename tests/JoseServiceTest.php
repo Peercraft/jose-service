@@ -15,7 +15,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $jose->getConfiguration()->set('Compression', array('DEF'));
 
         //We use all algorithms, including none
-        $jose->getConfiguration()->set('Algorithm', array(
+        $jose->getConfiguration()->set('Algorithms', array(
             'HS256',
             'HS384',
             'HS512',
