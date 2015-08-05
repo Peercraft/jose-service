@@ -80,8 +80,8 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
                 'k'   => 'GawgguFyGrWKav7AX4VKUg',
             )
         );
-        $jose->getKeyManager()->addRSAKeyFromFile('PRIVATE_RSA', file_get_contents(__DIR__.'/Keys/RSA/private.key'), 'tests');
-        $jose->getKeyManager()->addRSAKeyFromFile('PUBLIC_RSA', file_get_contents(__DIR__.'/Keys/RSA/public.key'));
+        $jose->getKeyManager()->addRSAKeyFromFile('PRIVATE_RSA', __DIR__.'/Keys/RSA/private.key', 'tests');
+        $jose->getKeyManager()->addRSAKeyFromFile('PUBLIC_RSA', __DIR__.'/Keys/RSA/public.key');
     }
 
     /**
