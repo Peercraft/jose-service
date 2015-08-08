@@ -7,7 +7,9 @@ use Jose\JWTManagerInterface;
 use Jose\JWKManagerInterface;
 use Jose\JWKSetManagerInterface;
 use Jose\Compression\CompressionManagerInterface;
+use SpomkyLabs\Jose\Checker\CheckerManagerInterface;
 use SpomkyLabs\Jose\Loader as Base;
+use SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface;
 
 class Loader extends Base
 {
@@ -42,44 +44,40 @@ class Loader extends Base
     protected $compression_manager;
 
     /**
+     * @var \SpomkyLabs\Jose\Checker\CheckerManagerInterface
+     */
+    protected $checker_manager;
+
+    /**
+     * @var \SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface
+     */
+    protected $payload_converter_manager;
+
+    /**
      * @param \Jose\JWAManagerInterface                     $jwa_manager
      * @param \Jose\JWTManagerInterface                     $jwt_manager
      * @param \Jose\JWKManagerInterface                     $jwk_manager
      * @param \Jose\JWKSetManagerInterface                  $jwkset_manager
      * @param \Jose\Compression\CompressionManagerInterface $compression_manager
+     * @param \SpomkyLabs\Jose\Checker\CheckerManagerInterface $checker_manager
+     * @param \SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface $payload_converter_manager
      */
     public function __construct(
         JWAManagerInterface    $jwa_manager,
         JWTManagerInterface    $jwt_manager,
         JWKManagerInterface    $jwk_manager,
         JWKSetManagerInterface $jwkset_manager,
-        CompressionManagerInterface $compression_manager
+        CompressionManagerInterface $compression_manager,
+        CheckerManagerInterface $checker_manager,
+        PayloadConverterManagerInterface $payload_converter_manager
     ) {
         $this->jwt_manager = $jwt_manager;
         $this->jwa_manager = $jwa_manager;
         $this->jwk_manager = $jwk_manager;
         $this->jwkset_manager = $jwkset_manager;
         $this->compression_manager = $compression_manager;
-    }
-
-    /**
-     * @param string $audience
-     *
-     * @return $this
-     */
-    public function setAudience($audience)
-    {
-        $this->audience = $audience;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getAudience()
-    {
-        return $this->audience;
+        $this->checker_manager = $checker_manager;
+        $this->payload_converter_manager = $payload_converter_manager;
     }
 
     /**
@@ -120,5 +118,21 @@ class Loader extends Base
     protected function getCompressionManager()
     {
         return $this->compression_manager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCheckerManager()
+    {
+        return $this->checker_manager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPayloadConverter()
+    {
+        return $this->payload_converter_manager;
     }
 }

@@ -8,6 +8,7 @@ use Jose\JWKManagerInterface;
 use Jose\JWKSetManagerInterface;
 use Jose\Compression\CompressionManagerInterface;
 use SpomkyLabs\Jose\Encrypter as Base;
+use SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface;
 
 class Encrypter extends Base
 {
@@ -37,6 +38,11 @@ class Encrypter extends Base
     private $compression_manager;
 
     /**
+     * @var \SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface
+     */
+    protected $payload_converter_manager;
+
+    /**
      * @param \Jose\JWAManagerInterface                     $jwa_manager
      * @param \Jose\JWTManagerInterface                     $jwt_manager
      * @param \Jose\JWKManagerInterface                     $jwk_manager
@@ -48,13 +54,15 @@ class Encrypter extends Base
         JWTManagerInterface    $jwt_manager,
         JWKManagerInterface    $jwk_manager,
         JWKSetManagerInterface $jwkset_manager,
-        CompressionManagerInterface $compression_manager
+        CompressionManagerInterface $compression_manager,
+        PayloadConverterManagerInterface $payload_converter_manager
     ) {
         $this->jwt_manager = $jwt_manager;
         $this->jwa_manager = $jwa_manager;
         $this->jwk_manager = $jwk_manager;
         $this->jwkset_manager = $jwkset_manager;
         $this->compression_manager = $compression_manager;
+        $this->payload_converter_manager = $payload_converter_manager;
     }
 
     /**
@@ -138,5 +146,13 @@ class Encrypter extends Base
         } else {
             throw new \Exception('Unable to create a random string');
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPayloadConverter()
+    {
+        return $this->payload_converter_manager;
     }
 }

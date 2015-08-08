@@ -5,6 +5,11 @@ namespace SpomkyLabs\Service;
 use Pimple\Container;
 use Jose\JWSInterface;
 use Jose\JSONSerializationModes;
+use SpomkyLabs\Jose\Checker\AudienceChecker;
+use SpomkyLabs\Jose\Checker\CheckerManager;
+use SpomkyLabs\Jose\Payload\JWKConverter;
+use SpomkyLabs\Jose\Payload\JWKSetConverter;
+use SpomkyLabs\Jose\Payload\PayloadConverterManager;
 use SpomkyLabs\Jose\SignatureInstruction;
 use SpomkyLabs\Jose\EncryptionInstruction;
 
@@ -32,7 +37,10 @@ class Jose
         $this->setJWTManager();
         $this->setJWKManager();
         $this->setJWKSetManager();
+        $this->loadServices();
         $this->setCompressionManager();
+        $this->setCheckerManager();
+        $this->setPayloadConverterManager();
         $this->setLoader();
         $this->setSigner();
         $this->setEncrypter();
@@ -56,7 +64,16 @@ class Jose
     private function setConfiguration()
     {
         $this->container['Configuration'] = function () {
-            return new Configuration();
+            $config = new Configuration();
+            $config
+                ->set('payload-converter.jwk', true)
+                ->set('payload-converter.jwkset', true)
+                ->set('checker.aud', true)
+                ->set('checker.exp', true)
+                ->set('checker.iat', true)
+                ->set('checker.crit', true)
+                ->set('checker.iss', true);
+            return $config;
         };
     }
 
@@ -117,6 +134,98 @@ class Jose
     }
 
     /**
+     * @return \SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface
+     */
+    public function loadServices()
+    {
+        $this->container['Checker.Audience'] = function ($c) {
+            $audience = $c['Configuration']->get('audience');
+            if (is_null($audience)) {
+                throw new \RuntimeException('Audience not defined in the configuration.');
+            }
+            return new AudienceChecker($audience);
+        };
+        $this->container['PayloadConverter.JWK'] = function ($c) {
+            return new JWKConverter($c['JWKManager']);
+        };
+        $this->container['PayloadConverter.JWKSet'] = function ($c) {
+            return new JWKSetConverter($c['JWKSetManager']);
+        };
+        $checkers = [
+            'Checker.IssuedAt' => 'SpomkyLabs\Jose\Checker\IssuedAtChecker',
+            'Checker.NotBefore' => 'SpomkyLabs\Jose\Checker\NotBeforeChecker',
+            'Checker.Expiration' => 'SpomkyLabs\Jose\Checker\ExpirationChecker',
+            'Checker.Critical' => 'SpomkyLabs\Jose\Checker\CriticalChecker',
+        ];
+        foreach($checkers as $service=>$class) {
+            $this->container[$service] = function () use ($class) {
+                return new $class;
+            };
+        }
+    }
+
+    /**
+     * @return \SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface
+     */
+    public function getPayloadConverterManager()
+    {
+        return $this->container['PayloadConverterManager'];
+    }
+
+    /**
+     *
+     */
+    private function setPayloadConverterManager()
+    {
+        $this->container['PayloadConverterManager'] = function ($c) {
+            $payload_converter_manager =  new PayloadConverterManager();
+            $converters = [
+                'jwk' => 'PayloadConverter.JWK',
+                'jwkset' => 'PayloadConverter.JWKSet',
+            ];
+            foreach($converters as $converter=>$service) {
+                if (true === $c['Configuration']->get("payload-converter.$converter")) {
+                    $payload_converter_manager->addConverter($c[$service]);
+                }
+            }
+            return $payload_converter_manager;
+        };
+    }
+
+    /**
+     *
+     */
+    private function setCheckerManager()
+    {
+        $this->container['CheckerManager'] = function ($c) {
+            $checker_manager = new CheckerManager();
+            $checkers = [
+                'aud' => 'Checker.Audience',
+                'exp' => 'Checker.IssuedAt',
+                'iat' => 'Checker.NotBefore',
+                'crit' => 'Checker.Expiration',
+                'iss' => 'Checker.Critical',
+            ];
+            foreach($checkers as $checker=>$service) {
+                if (true === $c['Configuration']->get("checker.$checker")) {
+                    $checker_manager->addChecker($c[$service]);
+                }
+            }
+            return $checker_manager;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @return \SpomkyLabs\Jose\Checker\CheckerManagerInterface
+     */
+    public function getCheckerManager()
+    {
+        return $this->container['CheckerManager'];
+    }
+
+    /**
      *
      */
     private function setSigner()
@@ -126,7 +235,8 @@ class Jose
                 $c['JWAManager'],
                 $c['JWTManager'],
                 $c['JWKManager'],
-                $c['JWKSetManager']
+                $c['JWKSetManager'],
+                $c['PayloadConverterManager']
             );
         };
     }
@@ -142,7 +252,9 @@ class Jose
                 $c['JWTManager'],
                 $c['JWKManager'],
                 $c['JWKSetManager'],
-                $c['CompressionManager']
+                $c['CompressionManager'],
+                $c['CheckerManager'],
+                $c['PayloadConverterManager']
             );
         };
     }
@@ -158,7 +270,8 @@ class Jose
                 $c['JWTManager'],
                 $c['JWKManager'],
                 $c['JWKSetManager'],
-                $c['CompressionManager']
+                $c['CompressionManager'],
+                $c['PayloadConverterManager']
             );
         };
     }
@@ -273,14 +386,44 @@ class Jose
     /**
      * @param mixed $jwt
      *
-     * @return bool
+     * @return self
      */
     public function verify($jwt)
     {
-        if (false === $this->getLoader()->verify($jwt)) {
-            return false;
-        }
+        $this->getLoader()->verify($jwt);
 
-        return $jwt instanceof JWSInterface ? $this->getLoader()->verifySignature($jwt) : true;
+        if ($jwt instanceof JWSInterface && false === $this->getLoader()->verifySignature($jwt) ) {
+            throw new \Exception('Bad signature.');
+        }
+    }
+
+    /**
+     * @param mixed  $payload
+     * @param        $signature_kid
+     * @param array  $signature_protected_header
+     * @param        $encryption_kid
+     * @param array  $encryption_protected_header
+     * @param array  $signature_unprotected_header
+     * @param array  $encryption_shared_unprotected_header
+     * @param string $mode
+     * @param null   $aad
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function signAndEncrypt(
+        $payload,
+        $signature_kid,
+        array $signature_protected_header,
+        $encryption_kid,
+        array $encryption_protected_header,
+        array $signature_unprotected_header = array(),
+        array $encryption_shared_unprotected_header = array(),
+        $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION,
+        $aad = null
+    )
+    {
+        $jws = $this->sign($signature_kid, $payload, $signature_protected_header, $signature_unprotected_header, $mode);
+        return $this->encrypt($encryption_kid, $jws, $encryption_protected_header, $encryption_shared_unprotected_header, $mode, $aad);
     }
 }

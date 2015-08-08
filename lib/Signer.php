@@ -6,6 +6,7 @@ use Jose\JWKManagerInterface;
 use Jose\JWAManagerInterface;
 use Jose\JWTManagerInterface;
 use Jose\JWKSetManagerInterface;
+use SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface;
 use SpomkyLabs\Jose\Signer as Base;
 
 class Signer extends Base
@@ -31,6 +32,11 @@ class Signer extends Base
     protected $jwkset_manager;
 
     /**
+     * @var \SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface
+     */
+    protected $payload_converter_manager;
+
+    /**
      * @param \Jose\JWAManagerInterface    $jwa_manager
      * @param \Jose\JWTManagerInterface    $jwt_manager
      * @param \Jose\JWKManagerInterface    $jwk_manager
@@ -40,12 +46,14 @@ class Signer extends Base
         JWAManagerInterface    $jwa_manager,
         JWTManagerInterface    $jwt_manager,
         JWKManagerInterface    $jwk_manager,
-        JWKSetManagerInterface $jwkset_manager
+        JWKSetManagerInterface $jwkset_manager,
+        PayloadConverterManagerInterface $payload_converter_manager
     ) {
         $this->jwt_manager = $jwt_manager;
         $this->jwa_manager = $jwa_manager;
         $this->jwk_manager = $jwk_manager;
         $this->jwkset_manager = $jwkset_manager;
+        $this->payload_converter_manager = $payload_converter_manager;
     }
 
     /**
@@ -78,5 +86,13 @@ class Signer extends Base
     protected function getJWKSetManager()
     {
         return $this->jwkset_manager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPayloadConverter()
+    {
+        return $this->payload_converter_manager;
     }
 }

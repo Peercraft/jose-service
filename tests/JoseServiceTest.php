@@ -11,6 +11,9 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
     {
         $jose = Jose::getInstance();
 
+        //We define the audience
+        $jose->getConfiguration()->set('audience', 'My service');
+
         //We only need DEFLATE compression algorithm
         $jose->getConfiguration()->set('Compression', array('DEF'));
 
@@ -80,8 +83,8 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
                 'k'   => 'GawgguFyGrWKav7AX4VKUg',
             )
         );
-        $jose->getKeyManager()->addRSAKeyFromFile('PRIVATE_RSA', file_get_contents(__DIR__.'/Keys/RSA/private.key'), 'tests');
-        $jose->getKeyManager()->addRSAKeyFromFile('PUBLIC_RSA', file_get_contents(__DIR__.'/Keys/RSA/public.key'));
+        $jose->getKeyManager()->addRSAKeyFromFile('PRIVATE_RSA', __DIR__.'/Keys/RSA/private.key', 'tests');
+        $jose->getKeyManager()->addRSAKeyFromFile('PUBLIC_RSA', __DIR__.'/Keys/RSA/public.key');
     }
 
     /**
@@ -97,7 +100,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Jose\JWSInterface', $result);
         $this->assertEquals(array('iss' => 'joe', 'exp' => 1300819380, 'http://example.com/is_root' => true), $result->getPayload());
         $this->assertEquals('ES256', $result->getAlgorithm());
-        $this->assertTrue($jose->verify($result));
+        $jose->verify($result);
     }
 
     public function testLoadFlattenedJWE()
@@ -110,7 +113,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Live long and prosper.', $result->getPayload());
         $this->assertEquals('A128KW', $result->getAlgorithm());
         $this->assertEquals('A128CBC-HS256', $result->getEncryptionAlgorithm());
-        $this->assertTrue($jose->verify($result));
+        $jose->verify($result);
     }
 
     /**
@@ -128,7 +131,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Jose\JWSInterface', $result);
         $this->assertEquals(array('iss' => 'joe', 'exp' => 1300819380, 'http://example.com/is_root' => true), $result->getPayload());
         $this->assertEquals('HS256', $result->getAlgorithm());
-        $this->assertTrue($jose->verify($result));
+        $jose->verify($result);
     }
 
     /**
@@ -146,7 +149,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Jose\JWSInterface', $result);
         $this->assertEquals(array('iss' => 'joe', 'exp' => 1300819380, 'http://example.com/is_root' => true), $result->getPayload());
         $this->assertEquals('RS256', $result->getAlgorithm());
-        $this->assertTrue($jose->verify($result));
+        $jose->verify($result);
     }
 
     /**
@@ -164,7 +167,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Jose\JWSInterface', $result);
         $this->assertEquals(array('iss' => 'joe', 'exp' => 1300819380, 'http://example.com/is_root' => true), $result->getPayload());
         $this->assertEquals('ES256', $result->getAlgorithm());
-        $this->assertTrue($jose->verify($result));
+        $jose->verify($result);
     }
 
     /**
@@ -243,5 +246,58 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('A128CBC-HS256', $result->getEncryptionAlgorithm());
         $this->assertEquals('DEF', $result->getZip());
         $this->assertEquals('Je suis Charlie', $result->getPayload());
+    }
+
+    /**
+     */
+    public function testSignAndEncrypt()
+    {
+        $jose = Jose::getInstance();
+
+        $jwe = $jose->signAndEncrypt(
+            array(
+                'iss' => 'My app',
+                'exp' => time()+3600,
+                'iat' => time(),
+                'nbf' => time(),
+                'sub' => 'foo@bar',
+                'jti' => '0123456789',
+                'aud' => 'My service',
+            ),
+            'PRIVATE_EC',
+            array(
+                'alg' => 'ES256',
+                'kid' => 'e9bc097a-ce51-4036-9562-d2ade882db0d',
+            ),
+            '7',
+            array(
+                'alg' => 'A128KW',
+                'enc' => 'A128CBC-HS256',
+                'kid' => '7',
+                'zip' => 'DEF',
+            ),
+            array(),
+            array(),
+            JSONSerializationModes::JSON_FLATTENED_SERIALIZATION,
+            'foo,bar,baz'
+        );
+
+        //First, we load the JWE
+        $jws = $jose->load($jwe);
+
+        $this->assertInstanceOf('Jose\JWEInterface', $jws);
+        $this->assertEquals('A128KW', $jws->getAlgorithm());
+        $this->assertEquals('A128CBC-HS256', $jws->getEncryptionAlgorithm());
+        $this->assertEquals('DEF', $jws->getZip());
+        $this->assertTrue(is_array($jws->getPayload()));
+        $jose->verify($jws);
+
+        //Then, we load the JWS
+        $result = $jose->load($jws->getPayload());
+
+        $this->assertInstanceOf('Jose\JWSInterface', $result);
+        $this->assertEquals('ES256', $result->getAlgorithm());
+        $this->assertEquals('My app', $result->getIssuer());
+        $jose->verify($result);
     }
 }

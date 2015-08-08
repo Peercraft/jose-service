@@ -34,10 +34,14 @@ class Configuration
     /**
      * @param string $name
      * @param string $value
+     *
+     * @return self
      */
     public function set($name, $value)
     {
         $this->options[$name] = $value;
+
+        return $this;
     }
 
     /**
