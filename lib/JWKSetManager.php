@@ -1,11 +1,20 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 namespace SpomkyLabs\Service;
 
-use Jose\JWKSetInterface;
-use SpomkyLabs\Jose\JWKSet;
 use Jose\JWKManagerInterface;
+use Jose\JWKSetInterface;
 use Jose\JWKSetManager as Base;
+use SpomkyLabs\Jose\JWKSet;
 
 /**
  */
@@ -14,7 +23,7 @@ class JWKSetManager extends Base
     /**
      * @var array
      */
-    private $key_sets = array();
+    private $key_sets = [];
 
     /**
      * @var \Jose\JWKManagerInterface
@@ -37,7 +46,7 @@ class JWKSetManager extends Base
     /**
      * {@inheritdoc}
      */
-    public function createJWKSet(array $values = array())
+    public function createJWKSet(array $values = [])
     {
         $key_set = new JWKSet();
         foreach ($values as $value) {

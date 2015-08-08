@@ -1,11 +1,20 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 namespace SpomkyLabs\Service;
 
-use SpomkyLabs\Jose\JWK;
+use Base64Url\Base64Url;
 use Jose\JWKInterface;
 use Jose\JWKManager as Base;
-use Base64Url\Base64Url;
+use SpomkyLabs\Jose\JWK;
 use SpomkyLabs\Jose\Util\ECConverter;
 use SpomkyLabs\Jose\Util\RSAConverter;
 
@@ -16,12 +25,12 @@ class JWKManager extends Base
     /**
      * @var array
      */
-    private $keys = array();
+    private $keys = [];
 
     /**
      * {@inheritdoc}
      */
-    public function createJWK(array $values = array())
+    public function createJWK(array $values = [])
     {
         $jwk = new JWK();
         $jwk->setValues($values);
@@ -36,7 +45,7 @@ class JWKManager extends Base
      */
     public function getByKid($id)
     {
-        return $this->findByKid(array('kid' => $id));
+        return $this->findByKid(['kid' => $id]);
     }
 
     /**
@@ -59,9 +68,9 @@ class JWKManager extends Base
     protected function getSupportedMethods()
     {
         return array_merge(
-            array(
+            [
                 'findByKid',
-            ),
+            ],
             parent::getSupportedMethods()
         );
     }
@@ -88,17 +97,17 @@ class JWKManager extends Base
      */
     public function addSymmetricKey($id, $value)
     {
-        $values = array(
+        $values = [
             'kty' => 'oct',
             'k'   => Base64Url::encode($value),
-        );
+        ];
 
         return $this->addKeyFromValues($id, $values);
     }
 
     /**
-     * @param string $id
-     * @param string $rsa
+     * @param string      $id
+     * @param string      $rsa
      * @param null|string $passphrase
      *
      * @return $this
@@ -148,7 +157,7 @@ class JWKManager extends Base
 
     /**
      * @param string $id
-     * @param array $values
+     * @param array  $values
      *
      * @return $this
      */
