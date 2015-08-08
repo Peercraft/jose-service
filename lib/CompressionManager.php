@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 namespace SpomkyLabs\Service;
 
 use SpomkyLabs\Jose\Compression\CompressionManager as Base;
@@ -11,7 +20,7 @@ class CompressionManager extends Base
      */
     public function __construct(Configuration $config)
     {
-        if (! is_array($config->get('Compression'))) {
+        if (!is_array($config->get('Compression'))) {
             return;
         }
         $algs = $this->getAvailableCompressionAlgorithms();
@@ -32,10 +41,10 @@ class CompressionManager extends Base
      */
     private function getAvailableCompressionAlgorithms()
     {
-        return array(
-            'DEF' => 'SpomkyLabs\Jose\Compression\Deflate',
-            'GZ' => 'SpomkyLabs\Jose\Compression\GZip',
+        return [
+            'DEF'  => 'SpomkyLabs\Jose\Compression\Deflate',
+            'GZ'   => 'SpomkyLabs\Jose\Compression\GZip',
             'ZLIB' => 'SpomkyLabs\Jose\Compression\ZLib',
-        );
+        ];
     }
 }
