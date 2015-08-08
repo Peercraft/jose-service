@@ -1,17 +1,26 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 namespace SpomkyLabs\Service;
 
-use Pimple\Container;
-use Jose\JWSInterface;
 use Jose\JSONSerializationModes;
+use Jose\JWSInterface;
+use Pimple\Container;
 use SpomkyLabs\Jose\Checker\AudienceChecker;
 use SpomkyLabs\Jose\Checker\CheckerManager;
+use SpomkyLabs\Jose\EncryptionInstruction;
 use SpomkyLabs\Jose\Payload\JWKConverter;
 use SpomkyLabs\Jose\Payload\JWKSetConverter;
 use SpomkyLabs\Jose\Payload\PayloadConverterManager;
 use SpomkyLabs\Jose\SignatureInstruction;
-use SpomkyLabs\Jose\EncryptionInstruction;
 
 class Jose
 {
@@ -52,7 +61,7 @@ class Jose
     public static function getInstance()
     {
         if (is_null(self::$_instance)) {
-            self::$_instance = new Jose();
+            self::$_instance = new self();
         }
 
         return self::$_instance;
@@ -73,6 +82,7 @@ class Jose
                 ->set('checker.iat', true)
                 ->set('checker.crit', true)
                 ->set('checker.iss', true);
+
             return $config;
         };
     }
@@ -143,6 +153,7 @@ class Jose
             if (is_null($audience)) {
                 throw new \RuntimeException('Audience not defined in the configuration.');
             }
+
             return new AudienceChecker($audience);
         };
         $this->container['PayloadConverter.JWK'] = function ($c) {
@@ -152,14 +163,14 @@ class Jose
             return new JWKSetConverter($c['JWKSetManager']);
         };
         $checkers = [
-            'Checker.IssuedAt' => 'SpomkyLabs\Jose\Checker\IssuedAtChecker',
-            'Checker.NotBefore' => 'SpomkyLabs\Jose\Checker\NotBeforeChecker',
+            'Checker.IssuedAt'   => 'SpomkyLabs\Jose\Checker\IssuedAtChecker',
+            'Checker.NotBefore'  => 'SpomkyLabs\Jose\Checker\NotBeforeChecker',
             'Checker.Expiration' => 'SpomkyLabs\Jose\Checker\ExpirationChecker',
-            'Checker.Critical' => 'SpomkyLabs\Jose\Checker\CriticalChecker',
+            'Checker.Critical'   => 'SpomkyLabs\Jose\Checker\CriticalChecker',
         ];
-        foreach($checkers as $service=>$class) {
+        foreach ($checkers as $service => $class) {
             $this->container[$service] = function () use ($class) {
-                return new $class;
+                return new $class();
             };
         }
     }
@@ -178,16 +189,17 @@ class Jose
     private function setPayloadConverterManager()
     {
         $this->container['PayloadConverterManager'] = function ($c) {
-            $payload_converter_manager =  new PayloadConverterManager();
+            $payload_converter_manager = new PayloadConverterManager();
             $converters = [
-                'jwk' => 'PayloadConverter.JWK',
+                'jwk'    => 'PayloadConverter.JWK',
                 'jwkset' => 'PayloadConverter.JWKSet',
             ];
-            foreach($converters as $converter=>$service) {
+            foreach ($converters as $converter => $service) {
                 if (true === $c['Configuration']->get("payload-converter.$converter")) {
                     $payload_converter_manager->addConverter($c[$service]);
                 }
             }
+
             return $payload_converter_manager;
         };
     }
@@ -200,17 +212,18 @@ class Jose
         $this->container['CheckerManager'] = function ($c) {
             $checker_manager = new CheckerManager();
             $checkers = [
-                'aud' => 'Checker.Audience',
-                'exp' => 'Checker.IssuedAt',
-                'iat' => 'Checker.NotBefore',
+                'aud'  => 'Checker.Audience',
+                'exp'  => 'Checker.IssuedAt',
+                'iat'  => 'Checker.NotBefore',
                 'crit' => 'Checker.Expiration',
-                'iss' => 'Checker.Critical',
+                'iss'  => 'Checker.Critical',
             ];
-            foreach($checkers as $checker=>$service) {
+            foreach ($checkers as $checker => $service) {
                 if (true === $c['Configuration']->get("checker.$checker")) {
                     $checker_manager->addChecker($c[$service]);
                 }
             }
+
             return $checker_manager;
         };
 
@@ -341,11 +354,11 @@ class Jose
      * @param array  $unprotected_header
      * @param string $mode
      *
-     * @return string
-     *
      * @throws \Exception
+     *
+     * @return string
      */
-    public function sign($kid, $payload, array $protected_header, array $unprotected_header = array(), $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION)
+    public function sign($kid, $payload, array $protected_header, array $unprotected_header = [], $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION)
     {
         $key = $this->getKeyManager()->getByKid($kid);
         if (null === $key) {
@@ -356,7 +369,7 @@ class Jose
                     ->setProtectedHeader($protected_header)
                     ->setUnprotectedHeader($unprotected_header);
 
-        return $this->getSigner()->sign($payload, array($instruction), $mode);
+        return $this->getSigner()->sign($payload, [$instruction], $mode);
     }
 
     /**
@@ -367,11 +380,11 @@ class Jose
      * @param string $mode
      * @param null   $aad
      *
-     * @return string
-     *
      * @throws \Exception
+     *
+     * @return string
      */
-    public function encrypt($kid, $payload, array $protected_header, array $shared_unprotected_header = array(), $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION, $aad = null)
+    public function encrypt($kid, $payload, array $protected_header, array $shared_unprotected_header = [], $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION, $aad = null)
     {
         $key = $this->getKeyManager()->getByKid($kid);
         if (null === $key) {
@@ -380,7 +393,7 @@ class Jose
         $instruction = new EncryptionInstruction();
         $instruction->setRecipientKey($key);
 
-        return $this->getEncrypter()->encrypt($payload, array($instruction), $protected_header, $shared_unprotected_header, $mode, $aad);
+        return $this->getEncrypter()->encrypt($payload, [$instruction], $protected_header, $shared_unprotected_header, $mode, $aad);
     }
 
     /**
@@ -392,7 +405,7 @@ class Jose
     {
         $this->getLoader()->verify($jwt);
 
-        if ($jwt instanceof JWSInterface && false === $this->getLoader()->verifySignature($jwt) ) {
+        if ($jwt instanceof JWSInterface && false === $this->getLoader()->verifySignature($jwt)) {
             throw new \Exception('Bad signature.');
         }
     }
@@ -408,8 +421,9 @@ class Jose
      * @param string $mode
      * @param null   $aad
      *
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     public function signAndEncrypt(
         $payload,
@@ -417,13 +431,13 @@ class Jose
         array $signature_protected_header,
         $encryption_kid,
         array $encryption_protected_header,
-        array $signature_unprotected_header = array(),
-        array $encryption_shared_unprotected_header = array(),
+        array $signature_unprotected_header = [],
+        array $encryption_shared_unprotected_header = [],
         $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION,
         $aad = null
-    )
-    {
+    ) {
         $jws = $this->sign($signature_kid, $payload, $signature_protected_header, $signature_unprotected_header, $mode);
+
         return $this->encrypt($encryption_kid, $jws, $encryption_protected_header, $encryption_shared_unprotected_header, $mode, $aad);
     }
 }

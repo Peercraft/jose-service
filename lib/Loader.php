@@ -1,12 +1,21 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 namespace SpomkyLabs\Service;
 
+use Jose\Compression\CompressionManagerInterface;
 use Jose\JWAManagerInterface;
-use Jose\JWTManagerInterface;
 use Jose\JWKManagerInterface;
 use Jose\JWKSetManagerInterface;
-use Jose\Compression\CompressionManagerInterface;
+use Jose\JWTManagerInterface;
 use SpomkyLabs\Jose\Checker\CheckerManagerInterface;
 use SpomkyLabs\Jose\Loader as Base;
 use SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface;
@@ -54,12 +63,12 @@ class Loader extends Base
     protected $payload_converter_manager;
 
     /**
-     * @param \Jose\JWAManagerInterface                     $jwa_manager
-     * @param \Jose\JWTManagerInterface                     $jwt_manager
-     * @param \Jose\JWKManagerInterface                     $jwk_manager
-     * @param \Jose\JWKSetManagerInterface                  $jwkset_manager
-     * @param \Jose\Compression\CompressionManagerInterface $compression_manager
-     * @param \SpomkyLabs\Jose\Checker\CheckerManagerInterface $checker_manager
+     * @param \Jose\JWAManagerInterface                                 $jwa_manager
+     * @param \Jose\JWTManagerInterface                                 $jwt_manager
+     * @param \Jose\JWKManagerInterface                                 $jwk_manager
+     * @param \Jose\JWKSetManagerInterface                              $jwkset_manager
+     * @param \Jose\Compression\CompressionManagerInterface             $compression_manager
+     * @param \SpomkyLabs\Jose\Checker\CheckerManagerInterface          $checker_manager
      * @param \SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface $payload_converter_manager
      */
     public function __construct(

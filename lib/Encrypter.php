@@ -1,12 +1,21 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 namespace SpomkyLabs\Service;
 
+use Jose\Compression\CompressionManagerInterface;
 use Jose\JWAManagerInterface;
-use Jose\JWTManagerInterface;
 use Jose\JWKManagerInterface;
 use Jose\JWKSetManagerInterface;
-use Jose\Compression\CompressionManagerInterface;
+use Jose\JWTManagerInterface;
 use SpomkyLabs\Jose\Encrypter as Base;
 use SpomkyLabs\Jose\Payload\PayloadConverterManagerInterface;
 
@@ -108,8 +117,9 @@ class Encrypter extends Base
     /**
      * @param int $size
      *
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     protected function createCEK($size)
     {
@@ -119,8 +129,9 @@ class Encrypter extends Base
     /**
      * @param int $size
      *
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     protected function createIV($size)
     {
@@ -130,8 +141,9 @@ class Encrypter extends Base
     /**
      * @param $length
      *
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     private function generateRandomString($length)
     {
