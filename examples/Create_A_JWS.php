@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 include_once __DIR__.'/../vendor/autoload.php';
 
 use SpomkyLabs\Service\Jose;
@@ -9,11 +18,11 @@ $jose = Jose::getInstance();
 $jose->getConfiguration()->set('algorithms', ['HS512']);
 $jose->getConfiguration()->set('audience', 'My service');
 
-$jose->getKeysetManager()->loadKeyFromValues('SHARED_KEY',[
+$jose->getKeysetManager()->loadKeyFromValues('SHARED_KEY', [
     'alg' => 'HS512',
     'use' => 'sig',
     'kty' => 'oct',
-    'k'   => 'GawgguFyGrWKav7AX4VKUg'
+    'k'   => 'GawgguFyGrWKav7AX4VKUg',
 ]);
 
 $payload = [
@@ -26,12 +35,12 @@ $payload = [
     'aud' => 'My service',
 ];
 $header = [
-    "alg" => "HS512",
+    'alg' => 'HS512',
 ];
 
 $jws = $jose->sign('SHARED_KEY', $payload, $header);
 
-print_r(sprintf("\n\nJWS\n---------------------------------------------\n%s\n---------------------------------------------\n",$jws));
+print_r(sprintf("\n\nJWS\n---------------------------------------------\n%s\n---------------------------------------------\n", $jws));
 
 $loaded = $jose->load($jws);
 
