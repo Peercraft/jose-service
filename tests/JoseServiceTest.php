@@ -12,7 +12,6 @@
 namespace SpomkyLabs\Service\tests;
 
 use Jose\JSONSerializationModes;
-use SpomkyLabs\Jose\KeyConverter\KeyConverter;
 use SpomkyLabs\Jose\KeyConverter\RSAConverter;
 use SpomkyLabs\Service\Jose;
 
