@@ -1,27 +1,36 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 include_once __DIR__.'/../vendor/autoload.php';
 
-use SpomkyLabs\Service\Jose;
 use Base64Url\Base64Url;
+use SpomkyLabs\Service\Jose;
 
 $jose = Jose::getInstance();
 
 $jose->getConfiguration()->set('algorithms', ['HS512', 'A256GCM', 'A256GCMKW']);
 $jose->getConfiguration()->set('audience', 'My service');
 
-$jose->getKeysetManager()->loadKeyFromValues('SIGNATURE_KEY',[
+$jose->getKeysetManager()->loadKeyFromValues('SIGNATURE_KEY', [
     'alg' => 'HS512',
     'use' => 'sig',
     'kty' => 'oct',
-    'k'   => 'GawgguFyGrWKav7AX4VKUg'
+    'k'   => 'GawgguFyGrWKav7AX4VKUg',
 ]);
 
-$jose->getKeysetManager()->loadKeyFromValues('ENCRYPTION_KEY',[
+$jose->getKeysetManager()->loadKeyFromValues('ENCRYPTION_KEY', [
     'alg' => 'A256GCMKW',
     'use' => 'enc',
     'kty' => 'oct',
-    'k'   => Base64Url::encode(hex2bin('000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F'))
+    'k'   => Base64Url::encode(hex2bin('000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F')),
 ]);
 
 $payload = [
@@ -34,16 +43,16 @@ $payload = [
     'aud' => 'My service',
 ];
 $signature_header = [
-    "alg" => "HS512",
+    'alg' => 'HS512',
 ];
 $encryption_header = [
-    "alg" => "A256GCMKW",
-    "enc" => "A256GCM",
+    'alg' => 'A256GCMKW',
+    'enc' => 'A256GCM',
 ];
 
-$jwe = $jose->signAndEncrypt($payload,'SIGNATURE_KEY', $signature_header, 'ENCRYPTION_KEY', $encryption_header);
+$jwe = $jose->signAndEncrypt($payload, 'SIGNATURE_KEY', $signature_header, 'ENCRYPTION_KEY', $encryption_header);
 
-print_r(sprintf("\n\nJWS+JWE\n---------------------------------------------\n%s\n---------------------------------------------\n",$jwe));
+print_r(sprintf("\n\nJWS+JWE\n---------------------------------------------\n%s\n---------------------------------------------\n", $jwe));
 
 $jws = $jose->load($jwe);
 
