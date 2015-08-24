@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 namespace SpomkyLabs\Service;
 
 /**
@@ -15,14 +24,14 @@ class Configuration
     /**
      * @param array $options
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->options = $options;
     }
 
     /**
      * @param string $name
-     * @param mixed $default
+     * @param mixed  $default
      *
      * @return null|mixed
      */
@@ -34,10 +43,14 @@ class Configuration
     /**
      * @param string $name
      * @param string $value
+     *
+     * @return self
      */
     public function set($name, $value)
     {
         $this->options[$name] = $value;
+
+        return $this;
     }
 
     /**
