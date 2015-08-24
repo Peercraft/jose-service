@@ -50,8 +50,8 @@ You can find [here the complete list of supported algorithms](https://github.com
 Most of options are already set. We must only declare algorithms we want to use and the audience (= the name of our service):
 
 ```php
-$jose->getConfiguration->set('algorithms', ['ES2556', 'A128KW', 'A128CBC-HS256']);
-$jose->getConfiguration->set('audience', 'My service');
+$jose->getConfiguration()->set('algorithms', ['ES256', 'A128KW', 'A128CBC-HS256']);
+$jose->getConfiguration()->set('audience', 'My service');
 ```
 
 ## Key storage
