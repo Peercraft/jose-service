@@ -279,7 +279,7 @@ class JWKSetManager extends Base
         if (!array_key_exists('kty', $values)) {
             throw new \InvalidArgumentException('Unable to determine the key type');
         }
-        /**
+        /*
          * @var \Jose\JWKInterface[]
          */
         $keys = [];
