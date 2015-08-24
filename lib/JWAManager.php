@@ -20,11 +20,13 @@ class JWAManager extends Base
      */
     public function __construct(Configuration $config)
     {
-        if (!is_array($config->get('Algorithms'))) {
+        $algorithms = $config->get('algorithms');
+
+        if (!is_array($algorithms)) {
             return;
         }
         $algs = $this->getAvailableAlgorithms();
-        foreach ($config->get('Algorithms') as $alg) {
+        foreach ($algorithms as $alg) {
             if (array_key_exists($alg, $algs)) {
                 $class = 'SpomkyLabs\Jose\Algorithm\\'.$algs[$alg];
                 try {

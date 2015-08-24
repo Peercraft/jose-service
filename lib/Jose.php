@@ -12,15 +12,19 @@
 namespace SpomkyLabs\Service;
 
 use Jose\JSONSerializationModes;
+use Jose\JWKInterface;
 use Jose\JWSInterface;
 use Pimple\Container;
 use SpomkyLabs\Jose\Checker\AudienceChecker;
 use SpomkyLabs\Jose\Checker\CheckerManager;
+use SpomkyLabs\Jose\Encrypter;
 use SpomkyLabs\Jose\EncryptionInstruction;
+use SpomkyLabs\Jose\Loader;
 use SpomkyLabs\Jose\Payload\JWKConverter;
 use SpomkyLabs\Jose\Payload\JWKSetConverter;
 use SpomkyLabs\Jose\Payload\PayloadConverterManager;
 use SpomkyLabs\Jose\SignatureInstruction;
+use SpomkyLabs\Jose\Signer;
 
 class Jose
 {
@@ -75,10 +79,12 @@ class Jose
         $this->container['Configuration'] = function () {
             $config = new Configuration();
             $config
+                ->set('compression', ['DEF'])
                 ->set('payload-converter.jwk', true)
                 ->set('payload-converter.jwkset', true)
                 ->set('checker.aud', true)
                 ->set('checker.exp', true)
+                ->set('checker.nbf', true)
                 ->set('checker.iat', true)
                 ->set('checker.crit', true)
                 ->set('checker.iss', true);
@@ -244,13 +250,13 @@ class Jose
     private function setSigner()
     {
         $this->container['Signer'] = function ($c) {
-            return new Signer(
-                $c['JWAManager'],
-                $c['JWTManager'],
-                $c['JWKManager'],
-                $c['JWKSetManager'],
-                $c['PayloadConverterManager']
-            );
+            $signer = new Signer();
+            $signer->setPayloadConverter($c['PayloadConverterManager'])
+                   ->setJWAManager($c['JWAManager'])
+                   ->setJWKManager($c['JWKManager'])
+                   ->setJWKSetManager($c['JWKSetManager'])
+                   ->setJWTManager($c['JWTManager']);
+            return $signer;
         };
     }
 
@@ -260,15 +266,15 @@ class Jose
     private function setLoader()
     {
         $this->container['Loader'] = function ($c) {
-            return new Loader(
-                $c['JWAManager'],
-                $c['JWTManager'],
-                $c['JWKManager'],
-                $c['JWKSetManager'],
-                $c['CompressionManager'],
-                $c['CheckerManager'],
-                $c['PayloadConverterManager']
-            );
+            $loader = new Loader();
+            $loader->setPayloadConverter($c['PayloadConverterManager'])
+                ->setCompressionManager($c['CompressionManager'])
+                ->setCheckerManager($c['CheckerManager'])
+                ->setJWAManager($c['JWAManager'])
+                ->setJWKManager($c['JWKManager'])
+                ->setJWKSetManager($c['JWKSetManager'])
+                ->setJWTManager($c['JWTManager']);
+            return $loader;
         };
     }
 
@@ -278,14 +284,15 @@ class Jose
     private function setEncrypter()
     {
         $this->container['Encrypter'] = function ($c) {
-            return new Encrypter(
-                $c['JWAManager'],
-                $c['JWTManager'],
-                $c['JWKManager'],
-                $c['JWKSetManager'],
-                $c['CompressionManager'],
-                $c['PayloadConverterManager']
-            );
+            $encrypter = new Encrypter();
+            $encrypter->setPayloadConverter($c['PayloadConverterManager'])
+                ->setCompressionManager($c['CompressionManager'])
+                ->setJWAManager($c['JWAManager'])
+                ->setJWKManager($c['JWKManager'])
+                ->setJWKSetManager($c['JWKSetManager'])
+                ->setJWTManager($c['JWTManager']);
+
+            return $encrypter;
         };
     }
 
@@ -298,7 +305,7 @@ class Jose
     }
 
     /**
-     * @return \SpomkyLabs\Service\Signer
+     * @return \SpomkyLabs\Jose\Signer
      */
     public function getSigner()
     {
@@ -306,7 +313,7 @@ class Jose
     }
 
     /**
-     * @return \SpomkyLabs\Service\Encrypter
+     * @return \SpomkyLabs\Jose\Encrypter
      */
     public function getEncrypter()
     {
@@ -314,19 +321,11 @@ class Jose
     }
 
     /**
-     * @return \SpomkyLabs\Service\Loader
+     * @return \SpomkyLabs\Jose\Loader
      */
     public function getLoader()
     {
         return $this->container['Loader'];
-    }
-
-    /**
-     * @return \SpomkyLabs\Service\JWKManager
-     */
-    public function getKeyManager()
-    {
-        return $this->container['JWKManager'];
     }
 
     /**
@@ -360,10 +359,14 @@ class Jose
      */
     public function sign($kid, $payload, array $protected_header, array $unprotected_header = [], $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION)
     {
-        $key = $this->getKeyManager()->getByKid($kid);
-        if (null === $key) {
+        $key = $this->getKeysetManager()->getKeyByKid($kid);
+        if (!$key instanceof JWKInterface) {
             throw new \Exception('Unable to determine the key used to sign the payload.');
         }
+        if (!array_key_exists('kid', $protected_header)) {
+            $protected_header['kid'] = $kid;
+        }
+
         $instruction = new SignatureInstruction();
         $instruction->setKey($key)
                     ->setProtectedHeader($protected_header)
@@ -386,9 +389,12 @@ class Jose
      */
     public function encrypt($kid, $payload, array $protected_header, array $shared_unprotected_header = [], $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION, $aad = null)
     {
-        $key = $this->getKeyManager()->getByKid($kid);
-        if (null === $key) {
+        $key = $this->getKeysetManager()->getKeyByKid($kid);
+        if (!$key instanceof JWKInterface) {
             throw new \Exception('Unable to determine the key used to encrypt the payload.');
+        }
+        if (!array_key_exists('kid', $protected_header)) {
+            $protected_header['kid'] = $kid;
         }
         $instruction = new EncryptionInstruction();
         $instruction->setRecipientKey($key);
@@ -397,9 +403,9 @@ class Jose
     }
 
     /**
-     * @param mixed $jwt
+     * @param $jwt
      *
-     * @return self
+     * @throws \Exception
      */
     public function verify($jwt)
     {

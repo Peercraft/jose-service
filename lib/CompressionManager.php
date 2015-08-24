@@ -20,11 +20,13 @@ class CompressionManager extends Base
      */
     public function __construct(Configuration $config)
     {
-        if (!is_array($config->get('Compression'))) {
+        $compressions = $config->get('compression');
+
+        if (!is_array($compressions)) {
             return;
         }
         $algs = $this->getAvailableCompressionAlgorithms();
-        foreach ($config->get('Compression') as $alg) {
+        foreach ($compressions as $alg) {
             if (array_key_exists($alg, $algs)) {
                 $class = $algs[$alg];
                 try {

@@ -23,7 +23,7 @@
     },
     "require": {
         "php": ">=5.3",
-        "spomky-labs/jose": "dev-develop",
+        "spomky-labs/jose": "~0.0.0",
         "pimple/pimple": "~3.0.0"
     },
     "require-dev": {
