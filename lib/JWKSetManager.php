@@ -39,7 +39,7 @@ class JWKSetManager extends Base
     public function __construct(JWKManagerInterface $jwk_manager)
     {
         $this->jwk_manager = $jwk_manager;
-        foreach(['private', 'shared', 'public', 'asymmetric', 'direct'] as $name) {
+        foreach (['private', 'shared', 'public', 'asymmetric', 'direct'] as $name) {
             $this->key_sets[$name] = $this->createJWKSet();
         }
     }
@@ -59,7 +59,7 @@ class JWKSetManager extends Base
                 'findByKeyID',
                 'findByKeyAlgorithm',
                 'findByKeyUsage',
-                'findByKeyOperation'
+                'findByKeyOperation',
             ],
             parent::getSupportedMethods()
         );
@@ -189,14 +189,14 @@ class JWKSetManager extends Base
      *
      * @return mixed
      */
-    public function __call($method , array $arguments)
+    public function __call($method, array $arguments)
     {
-        if (method_exists($this,$method)) {
-            return call_user_func_array(array($this, $method), $arguments);
+        if (method_exists($this, $method)) {
+            return call_user_func_array([$this, $method], $arguments);
         }
 
-        if (0 === strpos($method, 'get') && strlen($method)-6 === strpos($method, 'KeySet')) {
-            $keyset = strtolower(substr($method, 3, strlen($method)-9));
+        if (0 === strpos($method, 'get') && strlen($method) - 6 === strpos($method, 'KeySet')) {
+            $keyset = strtolower(substr($method, 3, strlen($method) - 9));
             if (array_key_exists($keyset, $this->key_sets)) {
                 return $this->key_sets[$keyset];
             }
@@ -253,7 +253,7 @@ class JWKSetManager extends Base
     }
 
     /**
-     * @param string      $kid               The key ID
+     * @param string   $kid               The key ID
      * @param resource $resource          OpenSSL resource
      * @param array    $additional_values Add additional parameters to your key ('alg'=>'RS256'...)
      *
@@ -280,10 +280,10 @@ class JWKSetManager extends Base
             throw new \InvalidArgumentException('Unable to determine the key type');
         }
         /**
-         * @var \Jose\JWKInterface[] $keys
+         * @var \Jose\JWKInterface[]
          */
         $keys = [];
-        switch($values['kty']) {
+        switch ($values['kty']) {
             case 'RSA':
                 $rsa = new RSAKey($values);
                 if ($rsa->isPrivate()) {
@@ -320,12 +320,13 @@ class JWKSetManager extends Base
                 throw new \InvalidArgumentException('Unsupported key type');
         }
 
-        foreach($keys as $name=>$jwk) {
+        foreach ($keys as $name => $jwk) {
             if (is_null($jwk->getKeyID())) {
                 $jwk->setValue('kid', $kid);
             }
             $this->addKeyInKeySet($name, $jwk);
         }
+
         return $this;
     }
 
@@ -335,9 +336,9 @@ class JWKSetManager extends Base
      *
      * @return $this
      */
-    public function loadKeyFromJWK( $kid, JWKInterface $jwk)
+    public function loadKeyFromJWK($kid, JWKInterface $jwk)
     {
-        $this->loadKeyFromValues($kid,$jwk->getValues());
+        $this->loadKeyFromValues($kid, $jwk->getValues());
 
         return $this;
     }

@@ -256,6 +256,7 @@ class Jose
                    ->setJWKManager($c['JWKManager'])
                    ->setJWKSetManager($c['JWKSetManager'])
                    ->setJWTManager($c['JWTManager']);
+
             return $signer;
         };
     }
@@ -274,6 +275,7 @@ class Jose
                 ->setJWKManager($c['JWKManager'])
                 ->setJWKSetManager($c['JWKSetManager'])
                 ->setJWTManager($c['JWTManager']);
+
             return $loader;
         };
     }
