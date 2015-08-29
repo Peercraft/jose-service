@@ -41,8 +41,8 @@ class Configuration
     }
 
     /**
-     * @param string $name
-     * @param string $value
+     * @param string     $name
+     * @param null|mixed $value
      *
      * @return self
      */
@@ -56,7 +56,7 @@ class Configuration
     /**
      * @param string $name
      *
-     * @return $this
+     * @return self
      */
     public function remove($name)
     {
