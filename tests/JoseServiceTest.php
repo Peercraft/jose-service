@@ -110,13 +110,17 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
     {
         $jose = Jose::getInstance();
 
-        $result = $jose->load('{"protected":"eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0","unprotected":{"jku":"https://server.example.com/keys.jwks"},"header":{"alg":"A128KW","kid":"7"},"encrypted_key":"6KB707dM9YTIgHtLvtgWQ8mKwboJW3of9locizkDTHzBC2IlrT1oOQ","iv":"AxY8DCtDaGlsbGljb3RoZQ","ciphertext":"KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY","tag":"Mz-VPPyU4RlcuYv1IwIvzw"}');
+        $jwe = $jose->load('{"protected":"eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0","unprotected":{"jku":"https://server.example.com/keys.jwks"},"header":{"alg":"A128KW","kid":"7"},"encrypted_key":"6KB707dM9YTIgHtLvtgWQ8mKwboJW3of9locizkDTHzBC2IlrT1oOQ","iv":"AxY8DCtDaGlsbGljb3RoZQ","ciphertext":"KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY","tag":"Mz-VPPyU4RlcuYv1IwIvzw"}');
 
-        $this->assertInstanceOf('Jose\JWEInterface', $result);
-        $this->assertEquals('Live long and prosper.', $result->getPayload());
-        $this->assertEquals('A128KW', $result->getAlgorithm());
-        $this->assertEquals('A128CBC-HS256', $result->getEncryptionAlgorithm());
-        $jose->verify($result);
+        $this->assertInstanceOf('Jose\JWEInterface', $jwe);
+        $this->assertEquals('A128KW', $jwe->getAlgorithm());
+        $this->assertEquals('A128CBC-HS256', $jwe->getEncryptionAlgorithm());
+        $this->assertNull($jwe->getPayload());
+
+        $result = $jose->decrypt($jwe);
+
+        $this->assertTrue($result);
+        $this->assertEquals('Live long and prosper.', $jwe->getPayload());
     }
 
     /**
@@ -229,7 +233,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
     {
         $jose = Jose::getInstance();
 
-        $jwe = $jose->encrypt(
+        $encrypted = $jose->encrypt(
             '7',
             'Je suis Charlie',
             [
@@ -239,15 +243,20 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertTrue(is_string($jwe));
+        $this->assertTrue(is_string($encrypted));
 
-        $result = $jose->load($jwe);
+        $jwe = $jose->load($encrypted);
 
-        $this->assertInstanceOf('Jose\JWEInterface', $result);
-        $this->assertEquals('A128KW', $result->getAlgorithm());
-        $this->assertEquals('A128CBC-HS256', $result->getEncryptionAlgorithm());
-        $this->assertEquals('DEF', $result->getZip());
-        $this->assertEquals('Je suis Charlie', $result->getPayload());
+        $this->assertInstanceOf('Jose\JWEInterface', $jwe);
+        $this->assertEquals('A128KW', $jwe->getAlgorithm());
+        $this->assertEquals('A128CBC-HS256', $jwe->getEncryptionAlgorithm());
+        $this->assertEquals('DEF', $jwe->getZip());
+        $this->assertNull($jwe->getPayload());
+
+        $result = $jose->decrypt($jwe);
+
+        $this->assertTrue($result);
+        $this->assertEquals('Je suis Charlie', $jwe->getPayload());
     }
 
     /**
@@ -256,7 +265,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
     {
         $jose = Jose::getInstance();
 
-        $jwe = $jose->encrypt(
+        $encrypted = $jose->encrypt(
             'My RSA Key',
             'Je suis Charlie',
             [
@@ -269,15 +278,20 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
             'aad foo bar'
         );
 
-        $this->assertTrue(is_string($jwe));
+        $this->assertTrue(is_string($encrypted));
 
-        $result = $jose->load($jwe);
+        $jwe = $jose->load($encrypted);
 
-        $this->assertInstanceOf('Jose\JWEInterface', $result);
-        $this->assertEquals('RSA-OAEP-256', $result->getAlgorithm());
-        $this->assertEquals('A256CBC-HS512', $result->getEncryptionAlgorithm());
-        $this->assertEquals('DEF', $result->getZip());
-        $this->assertEquals('Je suis Charlie', $result->getPayload());
+        $this->assertInstanceOf('Jose\JWEInterface', $jwe);
+        $this->assertEquals('RSA-OAEP-256', $jwe->getAlgorithm());
+        $this->assertEquals('A256CBC-HS512', $jwe->getEncryptionAlgorithm());
+        $this->assertEquals('DEF', $jwe->getZip());
+        $this->assertNull($jwe->getPayload());
+
+        $result = $jose->decrypt($jwe);
+
+        $this->assertTrue($result);
+        $this->assertEquals('Je suis Charlie', $jwe->getPayload());
     }
 
     /**
@@ -286,7 +300,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
     {
         $jose = Jose::getInstance();
 
-        $jwe = $jose->signAndEncrypt(
+        $encrypted = $jose->signAndEncrypt(
             [
                 'iss' => 'My app',
                 'exp' => time() + 3600,
@@ -313,21 +327,25 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
         );
 
         //First, we load the JWE
-        $jws = $jose->load($jwe);
+        $jwe = $jose->load($encrypted);
 
-        $this->assertInstanceOf('Jose\JWEInterface', $jws);
-        $this->assertEquals('A128KW', $jws->getAlgorithm());
-        $this->assertEquals('A128CBC-HS256', $jws->getEncryptionAlgorithm());
-        $this->assertEquals('DEF', $jws->getZip());
-        $this->assertTrue(is_array($jws->getPayload()));
-        $jose->verify($jws);
+        $this->assertInstanceOf('Jose\JWEInterface', $jwe);
+        $this->assertEquals('A128KW', $jwe->getAlgorithm());
+        $this->assertEquals('A128CBC-HS256', $jwe->getEncryptionAlgorithm());
+        $this->assertEquals('DEF', $jwe->getZip());
+        $this->assertNull($jwe->getPayload());
+
+        $result = $jose->decrypt($jwe);
+
+        $this->assertTrue($result);
+        $this->assertTrue(is_array($jwe->getPayload()));
 
         //Then, we load the JWS
-        $result = $jose->load($jws->getPayload());
+        $result = $jose->load($jwe->getPayload());
 
         $this->assertInstanceOf('Jose\JWSInterface', $result);
         $this->assertEquals('ES256', $result->getAlgorithm());
         $this->assertEquals('My app', $result->getIssuer());
-        $jose->verify($result);
+        $this->assertTrue($jose->verify($result));
     }
 }

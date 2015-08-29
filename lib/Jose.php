@@ -12,7 +12,9 @@
 namespace SpomkyLabs\Service;
 
 use Jose\JSONSerializationModes;
+use Jose\JWEInterface;
 use Jose\JWKInterface;
+use Jose\JWKSetInterface;
 use Jose\JWSInterface;
 use Pimple\Container;
 use SpomkyLabs\Jose\Checker\AudienceChecker;
@@ -405,17 +407,43 @@ class Jose
     }
 
     /**
-     * @param $jwt
+     * @param \Jose\JWEInterface         $jwe
+     * @param \Jose\JWKSetInterface|null $jwk_set
      *
      * @throws \Exception
+     *
+     * @return bool
      */
-    public function verify($jwt)
+    public function decrypt(JWEInterface $jwe, JWKSetInterface $jwk_set = null)
     {
-        $this->getLoader()->verify($jwt);
-
-        if ($jwt instanceof JWSInterface && false === $this->getLoader()->verifySignature($jwt)) {
-            throw new \Exception('Bad signature.');
+        if (false === $this->getLoader()->verify($jwe) ) {
+            return false;
         }
+
+        if (false === $this->getLoader()->decrypt($jwe, $jwk_set)) {
+            throw new \RuntimeException('Unable to decrypt.');
+        }
+        return true;
+    }
+
+    /**
+     * @param \Jose\JWSInterface         $jws
+     * @param \Jose\JWKSetInterface|null $jwk_set
+     *
+     * @throws \Exception
+     *
+     * @return bool
+     */
+    public function verify(JWSInterface $jws, JWKSetInterface $jwk_set = null)
+    {
+        if (false === $this->getLoader()->verify($jws) ) {
+            return false;
+        }
+
+        if (false === $this->getLoader()->verifySignature($jws, $jwk_set)) {
+            throw new \RuntimeException('Bad signature.');
+        }
+        return true;
     }
 
     /**

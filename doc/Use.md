@@ -194,9 +194,13 @@ $jwt = $jose->load('eyJhbGciOiJFUzUxMiJ9.UGF5bG9hZA.AdwMgeerwtHoh-l192l60hp9wAHZ
 
 //$jwt is an object that implements Jose\JWSInterface or Jose\JWSInterface
 
-//The $jwt has not yet been verified (expiration time, audience...).
+//If the object is a JWS, you must check its claims (expiration time, audience...) and signature:
 //The following method returns true or throws an exception.
 $result = $jose->verify($jwt);
+
+//If the object is a JWE, you must check its claims (expiration time, audience...) and decrypt the payload:
+//The following method returns true or throws an exception.
+$result = $jose->decrypt($jwe);
 ```
 
 ## Signature (JWS) ##
