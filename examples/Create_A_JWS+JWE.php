@@ -55,6 +55,10 @@ $jwe = $jose->signAndEncrypt($payload, 'SIGNATURE_KEY', $signature_header, 'ENCR
 print_r(sprintf("\n\nJWS+JWE\n---------------------------------------------\n%s\n---------------------------------------------\n", $jwe));
 
 $jws = $jose->load($jwe);
+if (!$jws instanceof \Jose\JWEInterface) {
+    die('error');
+}
+$jose->decrypt($jws);
 
 print_r(sprintf(
     "\n\nLoaded JWE

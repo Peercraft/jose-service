@@ -45,6 +45,10 @@ $jwe = $jose->encrypt('SHARED_KEY', $payload, $header);
 print_r(sprintf("\n\nJWE\n---------------------------------------------\n%s\n---------------------------------------------\n", $jwe));
 
 $loaded = $jose->load($jwe);
+if (!$loaded instanceof \Jose\JWEInterface) {
+    die('error');
+}
+$jose->decrypt($loaded);
 
 print_r(sprintf(
     "\n\nLoaded JWE
