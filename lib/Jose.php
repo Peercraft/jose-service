@@ -416,13 +416,14 @@ class Jose
      */
     public function decrypt(JWEInterface $jwe, JWKSetInterface $jwk_set = null)
     {
-        if (false === $this->getLoader()->verify($jwe) ) {
+        if (false === $this->getLoader()->verify($jwe)) {
             return false;
         }
 
         if (false === $this->getLoader()->decrypt($jwe, $jwk_set)) {
             throw new \RuntimeException('Unable to decrypt.');
         }
+
         return true;
     }
 
@@ -436,13 +437,14 @@ class Jose
      */
     public function verify(JWSInterface $jws, JWKSetInterface $jwk_set = null)
     {
-        if (false === $this->getLoader()->verify($jws) ) {
+        if (false === $this->getLoader()->verify($jws)) {
             return false;
         }
 
         if (false === $this->getLoader()->verifySignature($jws, $jwk_set)) {
             throw new \RuntimeException('Bad signature.');
         }
+
         return true;
     }
 
