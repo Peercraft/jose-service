@@ -329,6 +329,14 @@ class Jose
     }
 
     /**
+     * @return \SpomkyLabs\Service\JWKManager
+     */
+    public function getKeyManager()
+    {
+        return $this->container['JWKManager'];
+    }
+
+    /**
      * @return \SpomkyLabs\Service\JWKSetManager
      */
     public function getKeysetManager()
