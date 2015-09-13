@@ -12,7 +12,7 @@
 namespace SpomkyLabs\Service\tests;
 
 use Jose\JSONSerializationModes;
-use SpomkyLabs\Jose\KeyConverter\RSAConverter;
+use SpomkyLabs\Jose\KeyConverter\KeyConverter;
 use SpomkyLabs\Service\Jose;
 
 class JoseServiceTest extends \PHPUnit_Framework_TestCase
@@ -86,7 +86,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
 
         $jose->getKeysetManager()->loadKeyFromValues(
             'My RSA Key',
-            RSAConverter::loadKeyFromFile(__DIR__.'/Keys/RSA/private.key', 'tests')
+            KeyConverter::loadKeyFromFile(__DIR__.'/Keys/RSA/private.key', 'tests')
         );
     }
 

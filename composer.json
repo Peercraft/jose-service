@@ -3,11 +3,14 @@
     "description": "JSON Object Signing and Encryption service for PHP.",
     "type": "project",
     "license": "MIT",
-    "keywords": ["JWS", "JWT", "JWE", "JWA", "JWK", "JWKSet", "Jose"],
+    "keywords": ["JWS", "JWT", "JWE", "JWA", "JWK", "JWKSet", "Jot", "Jose", "RFC7515", "RFC7516", "RFC7517", "RFC7518", "RFC7519", "RFC7520"],
     "homepage": "https://github.com/Spomky-Labs/jose-service",
     "authors": [
         {
-            "name": "Florent Morselli",
+          "name": "Florent Morselli",
+          "homepage": "https://github.com/Spomky"
+        },{
+          "name": "All contributors",
             "homepage": "https://github.com/Spomky-Labs/jose-service/contributors"
         }
     ],
@@ -22,18 +25,14 @@
         }
     },
     "require": {
-        "php": ">=5.3",
-        "spomky-labs/jose": "~0.1.0",
+        "php": ">=5.6",
+        "spomky-labs/jose": "dev-master",
         "pimple/pimple": "~3.0.0"
     },
     "require-dev": {
-        "phpseclib/phpseclib": "~2.0.0",
-        "mdanter/ecc": "~0.3",
         "phpunit/phpunit": "~4.5",
-        "lib-openssl": "*",
-        "ext-mcrypt": "*",
-        "spomky-labs/pbkdf2": "~1.0",
-        "spomky-labs/aes-key-wrap": "~2.0"
+        "satooshi/php-coveralls": "dev-master"
+
     },
     "extra": {
         "branch-alias": {

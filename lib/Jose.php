@@ -255,8 +255,6 @@ class Jose
             $signer = new Signer();
             $signer->setPayloadConverter($c['PayloadConverterManager'])
                    ->setJWAManager($c['JWAManager'])
-                   ->setJWKManager($c['JWKManager'])
-                   ->setJWKSetManager($c['JWKSetManager'])
                    ->setJWTManager($c['JWTManager']);
 
             return $signer;
@@ -292,8 +290,6 @@ class Jose
             $encrypter->setPayloadConverter($c['PayloadConverterManager'])
                 ->setCompressionManager($c['CompressionManager'])
                 ->setJWAManager($c['JWAManager'])
-                ->setJWKManager($c['JWKManager'])
-                ->setJWKSetManager($c['JWKSetManager'])
                 ->setJWTManager($c['JWTManager']);
 
             return $encrypter;
