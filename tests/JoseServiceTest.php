@@ -68,6 +68,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
             'My EC Key',
             [
                 'kid' => 'My EC Key',
+                'use' => 'sig',
                 'kty' => 'EC',
                 'crv' => 'P-256',
                 'x'   => 'f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU',
@@ -80,6 +81,7 @@ class JoseServiceTest extends \PHPUnit_Framework_TestCase
             '7',
             [
                 'kty' => 'oct',
+                'use' => 'enc',
                 'k'   => 'GawgguFyGrWKav7AX4VKUg',
             ]
         );
