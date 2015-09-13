@@ -3,7 +3,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Spomky-Labs/jose-service/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Spomky-Labs/jose-service/?branch=master)
 [![Coverage Status](https://coveralls.io/repos/Spomky-Labs/jose-service/badge.svg?branch=master&service=github)](https://coveralls.io/github/Spomky-Labs/jose-service?branch=master)
 
-[![Build Status](https://travis-ci.org/Spomky-Labs/jose.svg?branch=master)](https://travis-ci.org/Spomky-Labs/jose)
+[![Build Status](https://travis-ci.org/Spomky-Labs/jose-service.svg?branch=master)](https://travis-ci.org/Spomky-Labs/jose-service)
 [![HHVM Status](http://hhvm.h4cc.de/badge/Spomky-Labs/jose-service.png)](http://hhvm.h4cc.de/package/Spomky-Labs/jose-service)
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/33c9c0b7-cc73-475e-8e83-e9526c539369/big.png)](https://insight.sensiolabs.com/projects/33c9c0b7-cc73-475e-8e83-e9526c539369)

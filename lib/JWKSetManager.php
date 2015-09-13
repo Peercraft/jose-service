@@ -253,21 +253,6 @@ class JWKSetManager extends Base
     }
 
     /**
-     * @param string   $kid               The key ID
-     * @param resource $resource          OpenSSL resource
-     * @param array    $additional_values Add additional parameters to your key ('alg'=>'RS256'...)
-     *
-     * @return $this
-     */
-    public function loadKeyFromResource($kid, $resource, array $additional_values = [])
-    {
-        $values = KeyConverter::loadKeyFromResource($resource);
-        $this->loadKeyFromValues($kid, $values, $additional_values);
-
-        return $this;
-    }
-
-    /**
      * @param string $kid               The key ID
      * @param array  $values            Array of values that represent a key
      * @param array  $additional_values Add additional parameters to your key ('alg'=>'RS256'...)
@@ -320,6 +305,9 @@ class JWKSetManager extends Base
                 throw new \InvalidArgumentException('Unsupported key type');
         }
 
+        /**
+         * @var $jwk \Jose\JWKInterface
+         */
         foreach ($keys as $name => $jwk) {
             if (is_null($jwk->getKeyID())) {
                 $jwk->setValue('kid', $kid);
