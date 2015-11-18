@@ -355,11 +355,11 @@ class Jose
     }
 
     /**
-     * @param string $kid
-     * @param mixed  $payload
-     * @param array  $protected_header
-     * @param array  $unprotected_header
-     * @param string $mode
+     * @param string|JWKInterface $kid
+     * @param mixed               $payload
+     * @param array               $protected_header
+     * @param array               $unprotected_header
+     * @param string              $mode
      *
      * @throws \Exception
      *
@@ -367,12 +367,17 @@ class Jose
      */
     public function sign($kid, $payload, array $protected_header, array $unprotected_header = [], $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION)
     {
-        $key = $this->getKeysetManager()->getKeyByKid($kid);
-        if (!$key instanceof JWKInterface) {
-            throw new \Exception('Unable to determine the key used to sign the payload.');
+        if ($kid instanceof JWKInterface) {
+            $key = $kid;
+        } else {
+            $key = $this->getKeysetManager()->getKeyByKid($kid);
+            if (!$key instanceof JWKInterface) {
+                throw new \Exception('Unable to determine the key used to sign the payload.');
+            }
         }
-        if (!array_key_exists('kid', $protected_header)) {
-            $protected_header['kid'] = $kid;
+
+        if (!array_key_exists('kid', $protected_header) && $key->getKeyId()) {
+            $protected_header['kid'] = $key->getKeyId();
         }
 
         $instruction = new SignatureInstruction();
@@ -384,12 +389,12 @@ class Jose
     }
 
     /**
-     * @param string $kid
-     * @param mixed  $payload
-     * @param array  $protected_header
-     * @param array  $shared_unprotected_header
-     * @param string $mode
-     * @param null   $aad
+     * @param string|JWKInterface $kid
+     * @param mixed               $payload
+     * @param array               $protected_header
+     * @param array               $shared_unprotected_header
+     * @param string              $mode
+     * @param null                $aad
      *
      * @throws \Exception
      *
@@ -397,13 +402,19 @@ class Jose
      */
     public function encrypt($kid, $payload, array $protected_header, array $shared_unprotected_header = [], $mode = JSONSerializationModes::JSON_COMPACT_SERIALIZATION, $aad = null)
     {
-        $key = $this->getKeysetManager()->getKeyByKid($kid);
-        if (!$key instanceof JWKInterface) {
-            throw new \Exception('Unable to determine the key used to encrypt the payload.');
+        if ($kid instanceof JWKInterface) {
+            $key = $kid;
+        } else {
+            $key = $this->getKeysetManager()->getKeyByKid($kid);
+            if (!$key instanceof JWKInterface) {
+                throw new \Exception('Unable to determine the key used to sign the payload.');
+            }
         }
-        if (!array_key_exists('kid', $protected_header)) {
-            $protected_header['kid'] = $kid;
+
+        if (!array_key_exists('kid', $protected_header) && $key->getKeyId()) {
+            $protected_header['kid'] = $key->getKeyId();
         }
+
         $instruction = new EncryptionInstruction();
         $instruction->setRecipientKey($key);
 

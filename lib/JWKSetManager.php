@@ -310,7 +310,7 @@ class JWKSetManager extends Base
          * @var $jwk \Jose\JWKInterface
          */
         foreach ($keys as $name => $jwk) {
-            if (is_null($jwk->getKeyID())) {
+            if (!is_null($kid) && is_null($jwk->getKeyID())) {
                 $jwk->setValue('kid', $kid);
             }
             $this->addKeyInKeySet($name, $jwk);
