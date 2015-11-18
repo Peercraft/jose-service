@@ -300,6 +300,7 @@ class JWKSetManager extends Base
                 $keys['direct'] = $this->getJWKManager()->createJWK(array_merge($values, $additional_values));
                 break;
             case 'none':
+                $keys['none'] = $this->getJWKManager()->createJWK(array_merge($values, $additional_values));
                 break;
             default:
                 throw new \InvalidArgumentException('Unsupported key type');
