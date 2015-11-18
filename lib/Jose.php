@@ -88,8 +88,7 @@ class Jose
                 ->set('checker.exp', true)
                 ->set('checker.nbf', true)
                 ->set('checker.iat', true)
-                ->set('checker.crit', true)
-                ->set('checker.iss', true);
+                ->set('checker.crit', true);
 
             return $config;
         };
@@ -221,10 +220,10 @@ class Jose
             $checker_manager = new CheckerManager();
             $checkers = [
                 'aud'  => 'Checker.Audience',
-                'exp'  => 'Checker.IssuedAt',
-                'iat'  => 'Checker.NotBefore',
-                'crit' => 'Checker.Expiration',
-                'iss'  => 'Checker.Critical',
+                'iat'  => 'Checker.IssuedAt',
+                'nbf'  => 'Checker.NotBefore',
+                'exp'  => 'Checker.Expiration',
+                'crit' => 'Checker.Critical',
             ];
             foreach ($checkers as $checker => $service) {
                 if (true === $c['Configuration']->get("checker.$checker")) {
