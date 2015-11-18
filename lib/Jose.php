@@ -43,7 +43,7 @@ class Jose
     /**
      *
      */
-    private function __construct()
+    public function __construct()
     {
         $this->container = new Container();
 
