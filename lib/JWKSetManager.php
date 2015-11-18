@@ -39,7 +39,7 @@ class JWKSetManager extends Base
     public function __construct(JWKManagerInterface $jwk_manager)
     {
         $this->jwk_manager = $jwk_manager;
-        foreach (['private', 'shared', 'public', 'asymmetric', 'direct'] as $name) {
+        foreach (['private', 'shared', 'public', 'symmetric', 'direct', 'none'] as $name) {
             $this->key_sets[$name] = $this->createJWKSet();
         }
     }
@@ -294,7 +294,7 @@ class JWKSetManager extends Base
                 $keys['public'] = $this->getJWKManager()->createJWK(array_merge(ECKey::toPublic($rsa)->toArray(), $additional_values));
                 break;
             case 'oct':
-                $keys['asymmetric'] = $this->getJWKManager()->createJWK(array_merge($values, $additional_values));
+                $keys['symmetric'] = $this->getJWKManager()->createJWK(array_merge($values, $additional_values));
                 break;
             case 'dir':
                 $keys['direct'] = $this->getJWKManager()->createJWK(array_merge($values, $additional_values));
